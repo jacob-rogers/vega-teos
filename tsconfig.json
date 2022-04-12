@@ -1,0 +1,29 @@
+{
+  "extends": "@gpn-prototypes/frontend-configs/tsconfig",
+  //  "include": ["src"]
+  "compilerOptions": {
+    "jsx": "react",
+    "target": "ES2020",
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noEmit": false,
+    "baseUrl": "./",
+    "noImplicitAny": false, //TODO delete - need to refactorß
+    "paths": {
+      "@app/*": ["./src/*"],
+      "rxjs": [
+        "node_modules/rxjs"
+      ],
+      "rxjs/*": [
+        "node_modules/rxjs/*"
+      ]
+    }
+  },
+  "include": ["src"]
+}
