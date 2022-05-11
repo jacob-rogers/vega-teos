@@ -19,7 +19,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --progress --config ./webpack.forShellConfig.js",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --mode development",
-    "dev:shell": "cross-env NODE_ENV=development webpack-dev-server --mode development --port 9006 --config ./webpack.forShellConfig.js",
+    "dev:shell": "cross-env NODE_ENV=development webpack-dev-server --mode development --port 9008 --config ./webpack.forShellConfig.js",
     "gen:codegen": "graphql-codegen --config codegen.yml",
     "server": "cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --disable-host-check --open --mode development",
     "test": "jest --passWithNoTests",
