@@ -1,7 +1,6 @@
 .ImportComponent {
   &__Header {
     padding: var(--space-xs) var(--space-m);
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;

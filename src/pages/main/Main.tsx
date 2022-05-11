@@ -5,8 +5,6 @@ import { ImportComponent } from '../../components/Import/ImportComponent';
 import { TeosTableComponent } from '../../components/TeosTable/TeosTableComponent';
 import { TeosTreeComponent } from '../../components/TeosTree/TeosTreeComponent';
 
-import './Main.css';
-
 const MainPage: React.FC = () => {
   /** State */
   const [isShownTree, setIsShownTree] = useState(true);
