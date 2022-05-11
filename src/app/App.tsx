@@ -6,9 +6,12 @@ import projectService from '@app/services/ProjectService';
 import { CurrentProject, Identity, ShellToolkit } from '@app/types';
 import { presetGpnDark, Theme } from '@consta/uikit/Theme';
 import { useMount } from '@gpn-prototypes/vega-ui';
+import { block } from 'bem-cn';
 import type { History } from 'history';
 
-import styles from './App.css';
+import './App.css';
+
+export const cn = block('App');
 
 const getInitProps = async ({
   currentProject,
@@ -45,15 +48,17 @@ const App: React.FC<Partial<ShellToolkit>> = (props) => {
 
   return (
     <React.StrictMode>
-      <Theme preset={presetGpnDark} className={styles.app}>
-        <Providers
-          currentProject={currentProject as CurrentProject}
-          graphqlClient={graphqlClient as ApolloClient<NormalizedCacheObject>}
-          identity={identity as Identity}
-          history={history as History}
-        >
-          <div className={styles.app}>{!isLoading && <MainPage />}</div>
-        </Providers>
+      <Theme preset={presetGpnDark}>
+        <div className={cn('Wrapper')}>
+          <Providers
+            currentProject={currentProject as CurrentProject}
+            graphqlClient={graphqlClient as ApolloClient<NormalizedCacheObject>}
+            identity={identity as Identity}
+            history={history as History}
+          >
+            <div className={cn()}>{!isLoading && <MainPage />}</div>
+          </Providers>
+        </div>
       </Theme>
     </React.StrictMode>
   );

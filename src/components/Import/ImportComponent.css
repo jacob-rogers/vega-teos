@@ -1,0 +1,11 @@
+.ImportComponent {
+  &__Header {
+    padding: var(--space-xs) var(--space-m);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-bg-secondary);
+  }
+}
