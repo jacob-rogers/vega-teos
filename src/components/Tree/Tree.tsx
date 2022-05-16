@@ -1,13 +1,14 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { TableActions } from '@app/store/table/TableActions';
-import { TreeActions } from '@app/store/tree/TreeActions';
 import { Button } from '@consta/uikit/Button';
 import { Text } from '@consta/uikit/Text';
-import { Tree, TreeItem } from '@gpn-prototypes/vega-ui';
+import { TargetData, Tree, TreeItem } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
 
 import { useTreeApi } from '../../hooks/useTreeApi';
+import { TreeFilter } from '../../store/StoreTypes';
+import { TableActions } from '../../store/table/TableActions';
+import TreeActions from '../../store/tree/TreeActions';
 
 import './Tree.css';
 
@@ -216,10 +217,35 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
     { isOpen }: PropsWithChildren<StructureTreeEditorProps>,
     ref,
   ): React.ReactElement {
-    const { sourceTree } = useTreeApi(rootProps);
-
     /** Store */
     const dispatch = useDispatch();
+
+    const resetState = useCallback(() => {
+      dispatch(TreeActions.resetState());
+    }, [dispatch]);
+
+    const setSelectedLeaf = useCallback(
+      (treeFilter: TreeFilter) => {
+        dispatch(TreeActions.setSelectedLeaf(treeFilter));
+      },
+      [dispatch],
+    );
+
+    /** Methods */
+    const onSelect = (selectedItems: TargetData[]) => {
+      if (selectedItems.length) {
+        // const node = searchInTree(tree, selectedItems[0].id);
+
+        setSelectedLeaf({
+          key: selectedItems[0].id,
+          label: selectedItems[0].ref?.current?.innerText || '',
+        });
+      } else {
+        resetState();
+      }
+    };
+
+    const { sourceTree } = useTreeApi(rootProps);
 
     const handleSetGeoScenario = () => {
       dispatch(
@@ -257,6 +283,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
             nodeList={sourceTree}
             isDndEnable={false}
             isContextMenuEnable={false}
+            onSelectItem={onSelect}
             withVisibilitySwitcher={false}
             withMultiSelect={false}
           />

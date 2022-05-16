@@ -17,3 +17,12 @@ export type StoreDependencies = {
   history: History;
   dispatch: Dispatch<AnyAction>;
 };
+
+export interface TreeState {
+  selectedLeaf: TreeFilter;
+}
+
+export interface TreeFilter {
+  key: string;
+  label: string;
+}
