@@ -3,7 +3,7 @@ import { SplitPanes, useSidebar } from '@gpn-prototypes/vega-ui';
 
 import { ImportComponent } from '../../components/Import/ImportComponent';
 import { TeosTableComponent } from '../../components/TeosTable/TeosTableComponent';
-import { TeosTreeComponent } from '../../components/TeosTree/TeosTreeComponent';
+import Tree from '../../components/Tree/Tree';
 
 const MainPage: React.FC = () => {
   /** State */
@@ -35,7 +35,7 @@ const MainPage: React.FC = () => {
           min="24px"
           max="300px"
         >
-          {isShownTree && <TeosTreeComponent />}
+          <Tree isOpen={isShownTree} ref={treeEditorRef} />
         </SplitPanes.Pane>
         <SplitPanes.Pane aria-label="table">
           <TeosTableComponent />

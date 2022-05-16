@@ -1102,7 +1102,23 @@
   dependencies:
     chalk "^4.0.0"
 
-"@consta/uikit@^3.13.0", "@consta/uikit@^3.18.3":
+"@consta/uikit@^3.13.0":
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-3.23.0.tgz#4f01bc52a071eccc635af433d8792f303b70432d"
+  integrity sha512-sGqDuu/EBrVv/JueFuhJ63hps9k2yUhsbyqV8Ef+Mkn1MeQDLfplNti6sfbcr2m7/1B6jv1Fqxy7HiFDDki/Ew==
+  dependencies:
+    "@bem-react/classname" "^1.5.8"
+    "@bem-react/classnames" "^1.3.9"
+    compute-scroll-into-view "^1.0.14"
+    date-fns "^2.17.0"
+    focus-trap-react "8.7.0"
+    imask "^6.2.2"
+    react-dropzone "11.3.4"
+    react-textarea-autosize "^7.1.2"
+    react-transition-group "^4.4.1"
+    tslib "^2.1.0"
+
+"@consta/uikit@^3.18.3":
   version "3.18.3"
   resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-3.18.3.tgz#603b2dc67f936167d0ef16972bc71e282d33c341"
   integrity sha512-uGYPvJoK2KJtoqfLB1sqDXG8NiE4z/dV3Sh4/ofszbe7imlAD3YYtvQQ4uNBG7U+eeGDD49WB5FkRquDjfIuZQ==
@@ -1333,9 +1349,9 @@
     y18n "^5.0.8"
 
 "@gpn-prototypes/vega-ui@^4.0.6":
-  version "4.0.7"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.7/7fdc2fe1d61fb609647db7c9fb9f372188f1ea461f0985480f00af5771174376#2f62e203a17222affd7fee255d5a5d867b5c96cc"
-  integrity sha512-54WOFrTKnZW1makaxeLqJT1yZJxxwYztcoRBtNeuZbIqVuqnaY/gz9hwXMIVg731Zkl2jCuIO29Y+kTYGVw7sw==
+  version "4.0.10"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.10/fc291c1e1a7b4c610f5631a37f0fed48c1b72809b3eb7b8c127522bb333ef7e6#9882347e4e313eca2895894f72463a11e5ef18b6"
+  integrity sha512-tFAD5itlSJFLpiAPWKjuBs3WulKGN4OKMFtVTiWfauJlw4tE4PiWn9RSJOgzAzWtAl3nbIQnXWfh00RVy0Aslg==
   dependencies:
     "@consta/uikit" "^3.13.0"
     "@emotion/babel-preset-css-prop" "^10.0.27"
@@ -3472,7 +3488,7 @@ babel-plugin-polyfill-regenerator@^0.3.0:
 babel-plugin-syntax-jsx@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-jsx/-/babel-plugin-syntax-jsx-6.18.0.tgz#0af32a9a6e13ca7a3fd5069e62d7b0f58d0d8946"
-  integrity sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=
+  integrity sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==
 
 babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
@@ -3592,7 +3608,7 @@ bem-cn@^3.0.1:
 bem-react@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/bem-react/-/bem-react-0.0.10.tgz#2ee5a5b7b3bb6ec0163e587d7c72e3d1c35c4a2d"
-  integrity sha1-LuWlt7O7bsAWPlh9fHLj0cNcSi0=
+  integrity sha512-nQHV9CQ6t3F19w4itv+vuSKT+tS/KHvdzGvhZfKjrtl/oyVrDona1qO0JQ18C9G3ZedYY/EFYNCdmYw1+RIkvA==
 
 bfj@^6.1.1:
   version "6.1.2"
@@ -10423,9 +10439,9 @@ react-konva@^16.13.0-6:
     scheduler "^0.19.1"
 
 react-popper@^2.2.4:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.2.5.tgz#1214ef3cec86330a171671a4fbcbeeb65ee58e96"
-  integrity sha512-kxGkS80eQGtLl18+uig1UIf9MKixFSyPxglsgLBxlYnyDf65BiY9B3nZSc6C9XUNDgStROB0fMQlTEz1KxGddw==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.3.0.tgz#17891c620e1320dce318bad9fede46a5f71c70ba"
+  integrity sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==
   dependencies:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
