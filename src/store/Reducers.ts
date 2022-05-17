@@ -1,8 +1,12 @@
 import { RootState } from '@app/store/StoreTypes';
 import { combineReducers } from 'redux';
 
-import { ExampleReducers } from './example/ExampleReducers';
+import { LoaderReducers } from './loader/LoaderReducers';
+import { TableReducers } from './table/TableReducers';
+import { TreeReducers } from './tree/TreeReducers';
 
 export default combineReducers<RootState>({
-  example: ExampleReducers,
+  tree: TreeReducers,
+  table: TableReducers,
+  loader: LoaderReducers,
 });

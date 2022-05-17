@@ -1,5 +1,6 @@
 import { combineEpics } from 'redux-observable';
 
-import { ExampleEpics } from './example/ExampleEpic';
+import { TableEpics } from './table/TableEpics';
+import { TreeEpics } from './tree/TreeEpics';
 
-export default combineEpics(...ExampleEpics);
+export default combineEpics(...TreeEpics, ...TableEpics);

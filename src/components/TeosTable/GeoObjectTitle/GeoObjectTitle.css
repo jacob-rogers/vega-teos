@@ -1,0 +1,8 @@
+.GeoObjectTitle {
+  display: flex;
+  flex-direction: column;
+
+  .Button {
+    max-width: 200px;
+  }
+}

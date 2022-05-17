@@ -1348,10 +1348,10 @@
     webpack-bundle-analyzer "^4.5.0"
     y18n "^5.0.8"
 
-"@gpn-prototypes/vega-ui@^4.0.6":
-  version "4.0.10"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.10/fc291c1e1a7b4c610f5631a37f0fed48c1b72809b3eb7b8c127522bb333ef7e6#9882347e4e313eca2895894f72463a11e5ef18b6"
-  integrity sha512-tFAD5itlSJFLpiAPWKjuBs3WulKGN4OKMFtVTiWfauJlw4tE4PiWn9RSJOgzAzWtAl3nbIQnXWfh00RVy0Aslg==
+"@gpn-prototypes/vega-ui@^4.0.11":
+  version "4.0.11"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.11/d1fb9d8e4cc0e7893c030bb15a7b42dc7b0ace6e8a3dadfcb37c6eba8433ab98#d2cd0104e3aaede8eb7c706495ae6f9877e456de"
+  integrity sha512-B4bB80PVG74Nxj6MoR6PV7NwevYdwXl5vhp3g/x4hKZkNrBiR005B6Tal89i8qPWQcyAmplArmHtzPerz/aPpg==
   dependencies:
     "@consta/uikit" "^3.13.0"
     "@emotion/babel-preset-css-prop" "^10.0.27"
@@ -10816,6 +10816,11 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
+
+reselect@^4.1.5:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.5.tgz#852c361247198da6756d07d9296c2b51eddb79f6"
+  integrity sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"
