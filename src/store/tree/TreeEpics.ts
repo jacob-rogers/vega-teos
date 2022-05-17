@@ -9,8 +9,6 @@ import { TreeActions } from './TreeActions';
 
 const treeEpic: Epic<AnyAction, AnyAction, RootState, StoreDependencies> = (
   action$,
-  state$,
-  { dispatch },
 ) =>
   action$.pipe(
     ofAction(TreeActions.setCurrentScenario, TreeActions.setCurrentGeoObject),
