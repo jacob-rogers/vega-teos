@@ -6,5 +6,5 @@ const factory = actionCreatorFactory('tree');
 
 export default {
   resetState: factory('RESET_STATE'),
-  setSelectedLeaf: factory<TreeFilter>('SET_SELECTED_LEAF'),
+  setParentNode: factory<TreeFilter>('SET_PARENT_NODE'),
 };

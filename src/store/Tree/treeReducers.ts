@@ -4,7 +4,7 @@ import actions from './treeActions';
 import { TreeState } from '../StoreTypes';
 
 const treeInitialState: TreeState = {
-  selectedLeaf: {
+  parentNode: {
     key: '0',
     label: '',
   },
@@ -12,9 +12,9 @@ const treeInitialState: TreeState = {
 
 const treeReducer = reducerWithInitialState<TreeState>(treeInitialState)
   .case(actions.resetState, (state) => treeInitialState)
-  .case(actions.setSelectedLeaf, (state, payload) => ({
+  .case(actions.setParentNode, (state, payload) => ({
     ...state,
-    selectedLeaf: payload,
+    parentNode: payload,
   }));
 
 export default treeReducer;

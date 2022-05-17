@@ -73,3 +73,50 @@ export const getNewTree = (
 
   return newTree;
 };
+
+const nonRootNode = (targetId: number): boolean => {
+  return targetId !== 1;
+}
+
+export const searchNode = (tree: TreeItem[], targetId: number): string | undefined => {
+
+    function search(item) {
+        if (item.id === foundIdx) {
+            found = item;
+            return true;
+        }
+
+        return Array.isArray(item.nodeList) && item.nodeList.some(iter);
+    }
+
+    let found, foundIdx = targetId;
+    found = { id: '0' };
+    tree.some(search);
+
+    foundIdx = found.parentId;
+    tree.some(search);
+
+    return found;
+}
+
+
+  const iter = () => {
+    if (n.nodeList.length === 0) {
+
+    }
+  }
+
+
+
+  tree.forEach((node: TreeItem) => {
+    if (targetId <= 0) {
+      return undefined;
+    }
+
+    if (nonRootNode(targetId) && node.id === targetId.toString()) {
+      return node.parentId;
+    }
+
+    return searchParent(node.nodeList, targetId);
+  });
+}

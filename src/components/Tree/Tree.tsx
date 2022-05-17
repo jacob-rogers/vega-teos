@@ -226,7 +226,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
 
     const setSelectedLeaf = useCallback(
       (treeFilter: TreeFilter) => {
-        dispatch(TreeActions.setSelectedLeaf(treeFilter));
+        dispatch(TreeActions.setParentNode(treeFilter));
       },
       [dispatch],
     );
@@ -235,6 +235,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
     const onSelect = (selectedItems: TargetData[]) => {
       if (selectedItems.length) {
         // const node = searchInTree(tree, selectedItems[0].id);
+        const parentNode = searchNode(rootProps, selectedItems[0].id);
 
         setSelectedLeaf({
           key: selectedItems[0].id,

@@ -29,13 +29,16 @@ export default React.forwardRef<HTMLDivElement, WorkspaceProps>(
     ref,
   ): React.ReactElement {
     const { key, label } = useSelector(({ tree }: RootState) => tree.selectedLeaf)
-    return key === '0' ? <TeosTableComponent /> : (
+
+    const isWidgetShown = !['0', '1'].includes(key); // no parents for root leaf / zero key
+
+    return isWidgetShown ?  (
       <div className={cn()} ref={ref}>
         <Text>
           [{key}] || {label}
         </Text>
         <Button label="Добавить сценарий" />
       </div>
-    );
+    ) : <TeosTableComponent />;
   }
 );

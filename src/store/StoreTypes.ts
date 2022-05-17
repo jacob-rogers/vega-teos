@@ -19,7 +19,7 @@ export type StoreDependencies = {
 };
 
 export interface TreeState {
-  selectedLeaf: TreeFilter;
+  parentNode: TreeFilter;
 }
 
 export interface TreeFilter {
