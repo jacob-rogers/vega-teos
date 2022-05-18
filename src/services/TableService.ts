@@ -1,9 +1,9 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { ProjectInner } from '@app/generated/graphql';
 import { ProjectServiceProps } from '@app/interfaces/ProjectInterface';
-import { TableDataPayload } from '@app/interfaces/TableInterfaces';
 import { TABLE_DATA_MOCK } from '@app/store/table/__mocks__/tableData';
 import { CurrentProject, Identity, Project } from '@app/types';
+import { TableDataPayload } from '@app/types/TableTypes';
 import { GridCollection } from '@gpn-prototypes/vega-ui';
 
 type ConcurrentProject = ProjectInner & Project;

@@ -28,13 +28,14 @@ function renderLeftSide(item: MenuItem): React.ReactNode {
   return <Icon size={item.iconSize ? item.iconSize : 's'} />;
 }
 
-interface IProps {
+interface Props {
   id: string;
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }
 
-export default forwardRef(({ id, isOpen, setIsOpen }: IProps, ref: any) => {
+/** TODO: вынести контекстное меню таблицы в vega-ui */
+export default forwardRef(({ id, isOpen, setIsOpen }: Props, ref: any) => {
   let menuItems: MenuItem[];
 
   switch (id) {

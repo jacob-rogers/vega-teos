@@ -1,4 +1,4 @@
-import { GeoObject, GeoScenario } from '@app/interfaces/TreeInterfaces';
+import { Attributes, GeoObject, GeoScenario } from '@app/types/TreeTypes';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
 import { TreeActions, TreeStore } from './TreeActions';
@@ -6,6 +6,7 @@ import { TreeActions, TreeStore } from './TreeActions';
 export const treeStoreInitialState: TreeStore = {
   currentScenario: undefined,
   currentGeoObject: undefined,
+  geoObjectScenarios: [],
 };
 
 export const TreeReducers = reducerWithInitialState<TreeStore>(
@@ -20,7 +21,6 @@ export const TreeReducers = reducerWithInitialState<TreeStore>(
       };
     },
   )
-
   .case(
     TreeActions.setCurrentGeoObject,
     (state, currentGeoObject: GeoObject) => {
@@ -29,4 +29,25 @@ export const TreeReducers = reducerWithInitialState<TreeStore>(
         currentGeoObject,
       };
     },
-  );
+  )
+  .case(TreeActions.setCurrentAttributes, (state, payload: Attributes) => {
+    return {
+      ...state,
+      currentScenario: payload.scenario,
+      currentGeoObject: payload.object,
+    };
+  })
+  .case(TreeActions.getGeoObjectScenarios, (state) => {
+    return {
+      ...state,
+      // TODO грузить список в эпике с бэкенда
+      geoObjectScenarios: [
+        {
+          title: 'Вариант 1',
+          currentScenario: {
+            title: 'Залежь 1',
+          },
+        },
+      ],
+    };
+  });

@@ -1,3 +1,3 @@
 import { RootState } from '../StoreTypes';
 
-export const tableDataSelector = (state: RootState) => state.table;
+export const selectTableData = (state: RootState) => state.table;

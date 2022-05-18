@@ -1,5 +1,9 @@
 import React from 'react';
-import { GeoScenario } from '@app/interfaces/TreeInterfaces';
+import { useSelector } from 'react-redux';
+import {
+  selectCurrentGeoObjectTitle,
+  selectGeoObjectScenarios,
+} from '@app/store/tree/TreeSelectors';
 import { Button } from '@consta/uikit/Button';
 import { cnMixSpace } from '@consta/uikit/MixSpace';
 import { Text } from '@consta/uikit/Text';
@@ -9,25 +13,17 @@ import './GeoObjectTitle.css';
 
 export const cn = block('GeoObjectTitle');
 
-interface IProps {
-  title: string;
-}
-
-export const GeoObjectTitle: React.FC<IProps> = (props) => {
-  const { title } = props;
-  // TODO: это мок, брать данные с бэка
-  const objectScenarios: GeoScenario[] = [
-    {
-      title: 'Вариант 1',
-    },
-  ];
+export const GeoObjectTitle: React.FC = () => {
+  /** Store */
+  const currentGeoObjectTitle = useSelector(selectCurrentGeoObjectTitle);
+  const geoObjectScenarios = useSelector(selectGeoObjectScenarios);
 
   return (
-    <div className={`${cn()} ${cnMixSpace({ mB: 'xl' })}`}>
+    <div className={cn()}>
       <Text size="m" weight="bold">
-        {title}
+        {currentGeoObjectTitle}
       </Text>
-      {objectScenarios.length ? (
+      {geoObjectScenarios.length ? (
         <Text size="s" view="secondary">
           Для добавления сценария перейдите на вкладку геологические сценарии.
         </Text>

@@ -1,4 +1,4 @@
-import { TableDataPayload } from '@app/interfaces/TableInterfaces';
+import { TableDataPayload } from '@app/types/TableTypes';
 import { GridCollection } from '@gpn-prototypes/vega-ui';
 import actionCreatorFactory from 'typescript-fsa';
 

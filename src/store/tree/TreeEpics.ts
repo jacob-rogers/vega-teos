@@ -11,7 +11,7 @@ const treeEpic: Epic<AnyAction, AnyAction, RootState, StoreDependencies> = (
   action$,
 ) =>
   action$.pipe(
-    ofAction(TreeActions.setCurrentScenario, TreeActions.setCurrentGeoObject),
+    ofAction(TreeActions.setCurrentAttributes),
     map(({ payload }) => console.log('payload', payload)),
     ignoreElements(),
   );

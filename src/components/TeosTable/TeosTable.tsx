@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ContextMenuId } from '@app/constants/TableConstants';
 import { selectTableLoading } from '@app/store/loader/LoaderSelector';
-import { tableDataSelector } from '@app/store/table/TableSelectors';
+import { selectTableData } from '@app/store/table/TableSelectors';
+import { TreeActions } from '@app/store/tree/TreeActions';
 import {
-  currentGeoObjectSelector,
-  currentScenarioSelector,
+  selectCurrentGeoObjectTitle,
+  selectCurrentScenarioTitle,
 } from '@app/store/tree/TreeSelectors';
 import { Loader } from '@consta/uikit/Loader';
 import { Text } from '@consta/uikit/Text';
@@ -20,12 +21,16 @@ import './TeosTable.css';
 
 export const cn = block('TeosTable');
 
+const DEFAULT_ROW_HEIGHT = 32;
+const DELIMETER_ROW_HEIGHT = 24;
+
 export const TeosTable: React.FC = () => {
   /** Store */
-  const currentScenarioTitle = useSelector(currentScenarioSelector)?.title;
-  const currentGeoObjectTitle = useSelector(currentGeoObjectSelector)?.title;
+  const dispatch = useDispatch();
+  const currentScenarioTitle = useSelector(selectCurrentScenarioTitle);
+  const currentGeoObjectTitle = useSelector(selectCurrentGeoObjectTitle);
   const tableDataIsLoading = useSelector(selectTableLoading);
-  const tableData: GridCollection = useSelector(tableDataSelector);
+  const tableData: GridCollection = useSelector(selectTableData);
 
   /** State */
   const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(false);
@@ -34,82 +39,58 @@ export const TeosTable: React.FC = () => {
   );
   const [contextRef, setContextRef] = useState(null);
 
+  /** Effects */
+  useEffect(() => {
+    dispatch(TreeActions.getGeoObjectScenarios());
+  });
+
   /** Refs */
   const gridRef = useRef(null);
 
   /** Handlers */
   const getRowHeight = (args): number => {
     if (args.type === 'ROW') {
-      return args.row.type === RowTypes.Default ? 32 : 24;
+      return args.row.type === RowTypes.Default
+        ? DEFAULT_ROW_HEIGHT
+        : DELIMETER_ROW_HEIGHT;
     }
 
-    return 32;
+    return DEFAULT_ROW_HEIGHT;
   };
 
-  /** Callbacks */
-  const onHeaderContextClick = useCallback((event, ref): void => {
+  const handleHeaderContextClick = (event, ref): void => {
     event.preventDefault();
     setContextMenuId(ContextMenuId.Header);
     setContextRef(ref);
     setIsContextMenuOpen(true);
-  }, []);
+  };
 
-  const onRowContextClick = useCallback((event, ref): void => {
+  const handleRowContextClick = (event, ref): void => {
     event.preventDefault();
     setContextMenuId(ContextMenuId.Row);
     setContextRef(ref);
     setIsContextMenuOpen(true);
-  }, []);
-
-  const handleSelectedCellChange = useCallback(
-    (event): void => {
-      const rowKey = tableData.rows[event.rowIdx].key!;
-      const columnKey = tableData.columns[event.idx].key;
-
-      localStorage.setItem(
-        'selectedCell',
-        JSON.stringify({
-          rowKey,
-          rowIdx: event.rowIdx,
-          columnKey,
-          columnIdx: event.idx,
-        }),
-      );
-    },
-    [tableData.columns, tableData.rows],
-  );
-
-  /* Memo */
-  const Table = useMemo(() => {
-    return tableDataIsLoading ? (
-      <Loader size="m" data-testid="table-data-loader" />
-    ) : (
-      <VegaTable
-        grid={tableData}
-        gridRef={gridRef}
-        rowHeight={getRowHeight}
-        handleHeaderContextClick={onHeaderContextClick}
-        handleRowContextClick={onRowContextClick}
-        handleSelectedCellChange={handleSelectedCellChange}
-      />
-    );
-  }, [
-    tableDataIsLoading,
-    tableData,
-    onHeaderContextClick,
-    onRowContextClick,
-    handleSelectedCellChange,
-  ]);
+  };
 
   return (
     <div className={cn()}>
       {currentGeoObjectTitle ? (
         <div className={cn('Container')}>
-          <GeoObjectTitle title={currentGeoObjectTitle} />
+          <GeoObjectTitle />
           {currentScenarioTitle && (
             <>
-              <ScenarioTitle title={currentScenarioTitle} />
-              {Table}
+              <ScenarioTitle />
+              {tableDataIsLoading ? (
+                <Loader size="m" data-testid="table-data-loader" />
+              ) : (
+                <VegaTable
+                  grid={tableData}
+                  gridRef={gridRef}
+                  rowHeight={getRowHeight}
+                  handleHeaderContextClick={handleHeaderContextClick}
+                  handleRowContextClick={handleRowContextClick}
+                />
+              )}
               <TableContextMenu
                 id={contextMenuId}
                 ref={contextRef}

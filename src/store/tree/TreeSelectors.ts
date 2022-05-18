@@ -1,7 +1,10 @@
 import { RootState } from '../StoreTypes';
 
-export const currentScenarioSelector = (state: RootState) =>
-  state.tree.currentScenario;
+export const selectCurrentScenarioTitle = (state: RootState) =>
+  state.tree.currentScenario?.title;
 
-export const currentGeoObjectSelector = (state: RootState) =>
-  state.tree.currentGeoObject;
+export const selectCurrentGeoObjectTitle = (state: RootState) =>
+  state.tree.currentGeoObject?.title;
+
+export const selectGeoObjectScenarios = (state: RootState) =>
+  state.tree.geoObjectScenarios;

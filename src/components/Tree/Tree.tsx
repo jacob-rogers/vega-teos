@@ -223,13 +223,11 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
 
     const handleSetGeoScenario = () => {
       dispatch(
-        TreeActions.setCurrentGeoObject({
-          title: 'Залежь 1',
-        }),
-      );
-      dispatch(
-        TreeActions.setCurrentScenario({
-          title: 'Вариант «1»',
+        TreeActions.setCurrentAttributes({
+          object: { title: 'Залежь 1' },
+          scenario: {
+            title: 'Вариант «1»',
+          },
         }),
       );
       dispatch(
