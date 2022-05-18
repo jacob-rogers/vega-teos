@@ -1,4 +1,8 @@
 import { TreeItem } from '@gpn-prototypes/vega-ui';
+import arrayToTree from 'array-to-tree';
+import { v4 as uuid } from 'uuid';
+
+import { ResultProjectTreeStructure } from '../generated/graphql';
 
 export const getNewTree = (
   nodes: TreeItem[],
@@ -73,50 +77,84 @@ export const getNewTree = (
 
   return newTree;
 };
+export interface TreeItemData {
+  id: string;
+  name: string;
+  nodeList: TreeItemData[];
+};
 
-const nonRootNode = (targetId: number): boolean => {
-  return targetId !== 1;
+export interface DomainObjectProfileItem {
+  name: string;
 }
 
-export const searchNode = (tree: TreeItem[], targetId: number): string | undefined => {
+const domainObjectProfileItems = [
+  {
+    name: 'Геологические сценарии',
+  },
+  {
+    name: 'Сценарии разработки',
+  },
+  {
+    name: 'Гистограммы толщин',
+  },
+];
 
-    function search(item) {
-        if (item.id === foundIdx) {
-            found = item;
-            return true;
-        }
+export const getNodeTreeFromAPIData = (
+  data: ResultProjectTreeStructure,
+  projectName,
+): TreeItem<TreeItemData>[] => {
+  const { domainObjects } = data;
 
-        return Array.isArray(item.nodeList) && item.nodeList.some(iter);
-    }
+  const nodeList: TreeItem<TreeItemData>[] = domainObjects
+    .filter((domainObject) => domainObject.domainObjectPath.some((path) => path !== null))
+    .map((domainObject) => {
+      const [ rootDomainObject, ...restDomainObjectPath ] = domainObject.domainObjectPath;
+      const rootDomainObjectId = domainObject.id || uuid();
 
-    let found, foundIdx = targetId;
-    found = { id: '0' };
-    tree.some(search);
+      return {
+        id: rootDomainObjectId,
+        name: rootDomainObject.value || '',
+        parentId: 'root',
+        nodeList: arrayToTree([
+          ...restDomainObjectPath.map((path, idx) => ({
+            id: path.code,
+            name: path.value || '',
+            parentId: idx === 0 ? rootDomainObjectId : restDomainObjectPath[idx-1].code,
+            nodeList: [],
+          })),
+          ...domainObjectProfileItems.map((profileItem: DomainObjectProfileItem) => ({
+            id: uuid(),
+            name: profileItem.name,
+            parentId: restDomainObjectPath[restDomainObjectPath.length-1].code,
+            nodeList: [],
+          })),
+        ], {
+          childrenProperty: 'nodeList',
+          customID: 'id',
+          parentProperty: 'parentId',
+        }),
+      };
+    });
 
-    foundIdx = found.parentId;
-    tree.some(search);
-
-    return found;
+  return nodeList;
 }
 
-
-  const iter = () => {
-    if (n.nodeList.length === 0) {
-
+export const searchNode = (tree: TreeItem[], targetId: string): TreeItem | undefined => {
+  function search(item) {
+    if (item.id === foundIdx) {
+      found = item;
+      return true;
     }
+
+    return Array.isArray(item.nodeList) && item.nodeList.some(search);
   }
 
+  let found, foundIdx = targetId;
+  found = { id: '0', name: '' };
+  tree.some(search);
 
+  foundIdx = found.parentId;
+  tree.some(search);
 
-  tree.forEach((node: TreeItem) => {
-    if (targetId <= 0) {
-      return undefined;
-    }
-
-    if (nonRootNode(targetId) && node.id === targetId.toString()) {
-      return node.parentId;
-    }
-
-    return searchParent(node.nodeList, targetId);
-  });
-}
+  return found;
+};

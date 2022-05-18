@@ -1,13 +1,18 @@
-import React, { PropsWithChildren, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button } from '@consta/uikit/Button';
+import React, { PropsWithChildren, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@consta/uikit/Text';
 import { TargetData, Tree, TreeItem } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
 
-import { useTreeApi } from '../../hooks/useTreeApi';
-import { TreeFilter } from '../../store/StoreTypes';
+import {
+  getNodeTreeFromAPIData,
+  searchNode,
+  TreeItemData,
+} from '../../helpers/TreeHelper';
+import ProjectService from '../../services/ProjectService';
+import { RootState, TreeFilter, TreeFilter } from '../../store/StoreTypes';
 import { TableActions } from '../../store/table/TableActions';
+import TreeActions from '../../store/Tree/TreeActions';
 import TreeActions from '../../store/tree/TreeActions';
 
 import './Tree.css';
@@ -221,32 +226,56 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
     const dispatch = useDispatch();
 
     const resetState = useCallback(() => {
-      dispatch(TreeActions.resetState());
+      dispatch(TreeActions.unsetSelectedResource());
     }, [dispatch]);
 
     const setSelectedLeaf = useCallback(
       (treeFilter: TreeFilter) => {
-        dispatch(TreeActions.setParentNode(treeFilter));
+        dispatch(TreeActions.setSelectedResource(treeFilter));
       },
       [dispatch],
     );
 
+    const setProjectTree = useCallback(
+      (data: TreeItem<TreeItemData>[]) => {
+        dispatch(TreeActions.setProjectTree(data));
+      },
+      [dispatch],
+    );
+
+    useEffect(() => {
+      async function getProjectTree() {
+        const data = await ProjectService.getProjectTree();
+
+        if (data) {
+          const nodes = getNodeTreeFromAPIData(data);
+
+          setProjectTree(nodes);
+        }
+      }
+      getProjectTree();
+    }, []);
+
     /** Methods */
     const onSelect = (selectedItems: TargetData[]) => {
+      console.log('selectedItems', selectedItems);
       if (selectedItems.length) {
-        // const node = searchInTree(tree, selectedItems[0].id);
         const parentNode = searchNode(rootProps, selectedItems[0].id);
 
-        setSelectedLeaf({
-          key: selectedItems[0].id,
-          label: selectedItems[0].ref?.current?.innerText || '',
-        });
+        if (parentNode) {
+          setSelectedLeaf({
+            key: parentNode.id,
+            label: parentNode.name,
+          });
+        } else {
+          resetState();
+        }
       } else {
         resetState();
       }
     };
 
-    const { sourceTree } = useTreeApi(rootProps);
+    const tree = useSelector(({ tree }: RootState) => tree.projectTree);
 
     const handleSetGeoScenario = () => {
       dispatch(
@@ -268,7 +297,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
     return (
       <div className={cnTree()} ref={ref}>
         <Text
-          className={cnTree('Placeholder').state({ open: isOpen })}
+          className={cnTree('Placeholder').state({ open: isOpen }).toString()}
           size="xs"
           view="ghost"
         >
@@ -281,7 +310,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
         />
         <div className={cnTree('Content').state({ open: isOpen })}>
           <Tree
-            nodeList={sourceTree}
+            nodeList={tree}
             isDndEnable={false}
             isContextMenuEnable={false}
             onSelectItem={onSelect}

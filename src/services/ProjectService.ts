@@ -8,8 +8,13 @@ import {
   ProjectInner,
   Query,
   ResultProjectStructure,
+  ResultProjectTreeStructure,
 } from '@app/generated/graphql';
-import { DEFAULT_QUERY } from '@app/graphql/queries/Queries';
+import {
+  DEFAULT_QUERY,
+  GET_PROJECT_NAME,
+  GET_PROJECT_TREE,
+} from '@app/graphql/queries/Queries';
 import { getGraphqlUri } from '@app/helpers/ServiceHelper';
 import { ProjectServiceProps } from '@app/interfaces/ProjectInterface';
 import { CurrentProject, Identity, Project } from '@app/types';
@@ -73,6 +78,20 @@ export class ProjectService {
     return this;
   }
 
+  async getProjectName(): Promise<string> {
+    const { data: responseData } = await this.client
+      .watchQuery({
+        query: GET_PROJECT_NAME,
+        variables: {
+          vid: this.projectId,
+        },
+        fetchPolicy: 'no-cache',
+      })
+      .result();
+
+    return responseData.project.name;
+  }
+
   async getResourceBaseData(): Promise<ResultProjectStructure | null> {
     const { data: responseData } = await this.client
       .watchQuery<Query>({
@@ -89,6 +108,25 @@ export class ProjectService {
       ['project', 'resourceBase', 'result', 'resultTable', 'template'],
       responseData,
     );
+  }
+
+  async getProjectTree(): Promise<ResultProjectTreeStructure | null> {
+    const { data: responseData } = await this.client
+      .watchQuery<Query>({
+        query: GET_PROJECT_TREE,
+        context: {
+          uri: getGraphqlUri(this.projectId),
+        },
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+      })
+      .result();
+
+      return getOr(
+        null,
+        ['project', 'teosQueries', 'getProjectTree'],
+        responseData,
+      );
   }
 }
 

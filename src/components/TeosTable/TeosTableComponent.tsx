@@ -28,16 +28,16 @@ export default React.forwardRef<HTMLDivElement, WorkspaceProps>(
     { dummy }: PropsWithChildren<WorkspaceProps>,
     ref,
   ): React.ReactElement {
-    const { key, label } = useSelector(({ tree }: RootState) => tree.selectedLeaf)
+    const { key, label } = useSelector(({ tree }: RootState) => tree.parentNode)
 
     const isWidgetShown = !['0', '1'].includes(key); // no parents for root leaf / zero key
 
     return isWidgetShown ?  (
-      <div className={cn()} ref={ref}>
+      <div className={cn('CreateScenarioWidget')} ref={ref}>
         <Text>
           [{key}] || {label}
         </Text>
-        <Button label="Добавить сценарий" />
+        <Button size='xs' label="Добавить сценарий" />
       </div>
     ) : <TeosTableComponent />;
   }

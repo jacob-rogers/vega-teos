@@ -1,5 +1,6 @@
+import { TreeItemData } from '@app/helpers/TreeHelper';
 import { ProjectService } from '@app/services/ProjectService';
-import { GridCollection } from '@gpn-prototypes/vega-ui';
+import { GridCollection, TreeItem } from '@gpn-prototypes/vega-ui';
 import { History } from 'history';
 import { AnyAction, Dispatch } from 'redux';
 
@@ -12,6 +13,10 @@ export interface RootState {
   loader: LoaderStore;
 }
 
+export interface ProjectState {
+  name: string;
+}
+
 export type StoreDependencies = {
   projectService: ProjectService;
   history: History;
@@ -20,6 +25,7 @@ export type StoreDependencies = {
 
 export interface TreeState {
   parentNode: TreeFilter;
+  projectTree: TreeItem<TreeItemData>[];
 }
 
 export interface TreeFilter {

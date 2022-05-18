@@ -25,3 +25,7 @@
     }
   }
 }
+
+.VegaTree__ItemName .label-selected {
+  font-weight: bold;
+}
