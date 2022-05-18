@@ -1,11 +1,15 @@
 import { ProjectService } from '@app/services/ProjectService';
+import { GridCollection } from '@gpn-prototypes/vega-ui';
 import { History } from 'history';
 import { AnyAction, Dispatch } from 'redux';
 
-import { ExampleStore } from './example/ExampleAction';
+import { LoaderStore } from './loader/LoaderActions';
+import { TreeStore } from './tree/TreeActions';
 
 export interface RootState {
-  example: ExampleStore;
+  tree: TreeStore;
+  table: GridCollection;
+  loader: LoaderStore;
 }
 
 export type StoreDependencies = {

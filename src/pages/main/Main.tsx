@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { SplitPanes, useSidebar } from '@gpn-prototypes/vega-ui';
 
-import { ImportComponent } from '../../components/Import/ImportComponent';
-import { TeosTableComponent } from '../../components/TeosTable/TeosTableComponent';
+import { ImportButton } from '../../components/ImportButton/ImportButton';
+import { TeosTable } from '../../components/TeosTable/TeosTable';
 import Tree from '../../components/Tree/Tree';
 
 const MainPage: React.FC = () => {
@@ -26,7 +26,7 @@ const MainPage: React.FC = () => {
 
   return (
     <>
-      <ImportComponent handleOpen={handleOpen} />
+      <ImportButton handleOpen={handleOpen} />
 
       <SplitPanes split="vertical" onResize={handleResize}>
         <SplitPanes.Pane
@@ -38,7 +38,7 @@ const MainPage: React.FC = () => {
           <Tree isOpen={isShownTree} ref={treeEditorRef} />
         </SplitPanes.Pane>
         <SplitPanes.Pane aria-label="table">
-          <TeosTableComponent />
+          <TeosTable />
         </SplitPanes.Pane>
       </SplitPanes>
     </>

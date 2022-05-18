@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { History } from 'history';
 
-type ProjectVID = string;
+export type ProjectVID = string;
 
 export interface Project {
   vid: ProjectVID;

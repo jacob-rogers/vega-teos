@@ -1,4 +1,8 @@
 import React, { PropsWithChildren } from 'react';
+import { useDispatch } from 'react-redux';
+import { TableActions } from '@app/store/table/TableActions';
+import { TreeActions } from '@app/store/tree/TreeActions';
+import { Button } from '@consta/uikit/Button';
 import { Text } from '@consta/uikit/Text';
 import { Tree, TreeItem } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
@@ -214,15 +218,40 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
   ): React.ReactElement {
     const { sourceTree } = useTreeApi(rootProps);
 
+    /** Store */
+    const dispatch = useDispatch();
+
+    const handleSetGeoScenario = () => {
+      dispatch(
+        TreeActions.setCurrentAttributes({
+          object: { title: 'Залежь 1' },
+          scenario: {
+            title: 'Вариант «1»',
+          },
+        }),
+      );
+      dispatch(
+        TableActions.initTableState({
+          geoObjectId: '1',
+          scenarioId: '1',
+        }),
+      );
+    };
+
     return (
       <div className={cnTree()} ref={ref}>
         <Text
           className={cnTree('Placeholder').state({ open: isOpen })}
           size="xs"
-          color="ghost"
+          view="ghost"
         >
           Дерево проекта
         </Text>
+        <Button
+          label="Выбрать сценарий"
+          onClick={handleSetGeoScenario}
+          size="xs"
+        />
         <div className={cnTree('Content').state({ open: isOpen })}>
           <Tree
             nodeList={sourceTree}

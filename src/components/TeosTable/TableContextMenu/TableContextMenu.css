@@ -1,0 +1,9 @@
+.TableContextMenu {
+  cursor: pointer;
+
+  &__Item {
+    .ContextMenuItem {
+      position: relative;
+    }
+  }
+}

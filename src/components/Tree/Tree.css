@@ -1,4 +1,7 @@
 .Tree {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xs) var(--space-s);
   width: 100%;
 
   &__Content {
