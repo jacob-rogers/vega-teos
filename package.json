@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@gpn-prototypes/frontend-configs": "^1.4.10",
-    "@gpn-prototypes/vega-ui": "^4.0.12",
+    "@gpn-prototypes/vega-ui": "^4.0.13",
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/introspection": "2.1.1",
     "@graphql-codegen/typescript": "^2.4.8",

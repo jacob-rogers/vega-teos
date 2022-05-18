@@ -13,6 +13,7 @@ import {
 } from '@app/store/tree/TreeSelectors';
 import { Button } from '@consta/uikit/Button';
 import { Loader } from '@consta/uikit/Loader';
+import { cnMixSpace } from '@consta/uikit/MixSpace';
 import { Text } from '@consta/uikit/Text';
 import { GridCollection, RowTypes, VegaTable } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
@@ -99,12 +100,14 @@ export const TeosTable: React.FC = () => {
                     handleHeaderContextClick={handleHeaderContextClick}
                     handleRowContextClick={handleRowContextClick}
                   />
-                  <Button
-                    view="secondary"
-                    label="+ Добавить строку"
-                    width="full"
-                    onClick={handleAddRow}
-                  />
+                  <div className={cnMixSpace({ mT: 'm' })}>
+                    <Button
+                      view="secondary"
+                      label="+ Добавить строку"
+                      width="full"
+                      onClick={handleAddRow}
+                    />
+                  </div>
                 </>
               )}
               <TableContextMenu
