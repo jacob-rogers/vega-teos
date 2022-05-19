@@ -15,3 +15,10 @@ export type TreeFilter = {
   key: string;
   label: string;
 };
+
+export interface TreeItemData {
+  id: string;
+  name: string;
+  parentId?: string;
+  nodeList: TreeItemData[];
+}

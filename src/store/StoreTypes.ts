@@ -1,26 +1,38 @@
-import { TreeItemData } from '@app/helpers/TreeHelper';
 import { ProjectService } from '@app/services/ProjectService';
-import { TreeFilter } from '@app/types/TreeTypes';
+import {
+  GeoObject,
+  GeoScenario,
+  TreeFilter,
+  TreeItemData,
+} from '@app/types/TreeTypes';
 import { GridCollection, TreeItem } from '@gpn-prototypes/vega-ui';
 import { History } from 'history';
 import { AnyAction, Dispatch } from 'redux';
 
-import { LoaderStore } from './loader/LoaderActions';
-import { TreeStore } from './tree/TreeActions';
+import { LoadingKeyValue } from './loader/LoaderActions';
 
 export interface RootState {
-  tree: TreeStore;
-  table: GridCollection;
   loader: LoaderStore;
+  project: ProjectStore;
+  table: GridCollection;
+  tree: TreeStore;
 }
 
-export interface ProjectState {
+export interface LoaderStore {
+  loaded: LoadingKeyValue;
+  loading: LoadingKeyValue;
+}
+
+export interface ProjectStore {
   name: string;
 }
 
-export interface TreeState {
+export interface TreeStore {
   parentNode: TreeFilter;
   projectTree: TreeItem<TreeItemData>[];
+  currentScenario?: GeoScenario;
+  currentGeoObject?: GeoObject;
+  geoObjectScenarios: GeoObject[];
 }
 
 export type StoreDependencies = {

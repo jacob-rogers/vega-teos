@@ -1,14 +1,15 @@
 import React, { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNodeTree, searchNode, TreeItemData } from '@app/helpers/TreeHelper';
-import projectService from '@app/services/ProjectService';
-import { RootState } from '@app/store/StoreTypes';
+import { searchParentNode } from '@app/helpers/TreeHelper';
+import { selectTreeLoading } from '@app/store/loader/LoaderSelectors';
 import { TableActions } from '@app/store/table/TableActions';
 import { TreeActions } from '@app/store/tree/TreeActions';
+import { selectTreeData } from '@app/store/tree/TreeSelectors';
 import { TreeFilter } from '@app/types/TreeTypes';
 import { Button } from '@consta/uikit/Button';
+import { Loader } from '@consta/uikit/Loader';
 import { Text } from '@consta/uikit/Text';
-import { TargetData, Tree, TreeItem } from '@gpn-prototypes/vega-ui';
+import { TargetData, Tree } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
 
 import './Tree.css';
@@ -26,47 +27,32 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
   ): React.ReactElement {
     /** Store */
     const dispatch = useDispatch();
+    const treeDataIsLoading = useSelector(selectTreeLoading);
+    const treeData = useSelector(selectTreeData);
 
     const resetState = useCallback(() => {
       dispatch(TreeActions.unsetSelectedResource());
     }, [dispatch]);
 
-    const setSelectedLeaf = useCallback(
+    const setCurrentGeoObject = useCallback(
       (treeFilter: TreeFilter) => {
         dispatch(TreeActions.setCurrentGeoObject({ title: treeFilter.label }));
       },
       [dispatch],
     );
 
-    const initProjectTree = useCallback(
-      (data: TreeItem<TreeItemData>[]) => {
-        dispatch(TreeActions.initProjectTree(data));
-      },
-      [dispatch],
-    );
-
+    /** Effects */
     useEffect(() => {
-      async function getProjectTree() {
-        const data = await projectService.getProjectTree();
-
-        if (data) {
-          const nodes = getNodeTree(data);
-
-          initProjectTree(nodes as TreeItem<TreeItemData>[]);
-        }
-      }
-      getProjectTree();
-    }, [initProjectTree]);
-
-    const sourceTree = useSelector(({ tree }: RootState) => tree.projectTree);
+      dispatch(TreeActions.initProjectTree());
+    }, [dispatch]);
 
     /** Methods */
     const onSelect = (selectedItems: TargetData[]) => {
       if (selectedItems.length) {
-        const parentNode = searchNode(sourceTree, selectedItems[0].id);
+        const parentNode = searchParentNode(treeData, selectedItems[0].id);
 
         if (parentNode) {
-          setSelectedLeaf({
+          setCurrentGeoObject({
             key: parentNode.id,
             label: parentNode.name,
           });
@@ -105,23 +91,29 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
         >
           Структура проекта
         </Text>
-        {isOpen && (
-          <Button
-            label="Выбрать сценарий"
-            onClick={handleSetGeoScenario}
-            size="xs"
-          />
+        {treeDataIsLoading ? (
+          <Loader size="m" data-testid="table-data-loader" />
+        ) : (
+          <>
+            {isOpen && (
+              <Button
+                label="Выбрать сценарий"
+                onClick={handleSetGeoScenario}
+                size="xs"
+              />
+            )}
+            <div className={cnTree('Content').state({ open: isOpen })}>
+              <Tree
+                nodeList={treeData}
+                isDndEnable={false}
+                isContextMenuEnable={false}
+                onSelectItem={onSelect}
+                withVisibilitySwitcher={false}
+                withMultiSelect={false}
+              />
+            </div>
+          </>
         )}
-        <div className={cnTree('Content').state({ open: isOpen })}>
-          <Tree
-            nodeList={sourceTree}
-            isDndEnable={false}
-            isContextMenuEnable={false}
-            onSelectItem={onSelect}
-            withVisibilitySwitcher={false}
-            withMultiSelect={false}
-          />
-        </div>
       </div>
     );
   },

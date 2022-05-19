@@ -1,4 +1,7 @@
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
@@ -8,6 +11,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -29,75 +33,10 @@ export type Scalars = {
   UUID: any;
 };
 
-export type Activity = {
-  __typename?: 'Activity';
-  category?: Maybe<ActivityLibraryCategory>;
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  editedAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-};
-
-/** Эффект мероприятия. */
-export type ActivityEffect = {
-  __typename?: 'ActivityEffect';
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  trigger?: Maybe<Scalars['String']>;
-  formula?: Maybe<Scalars['String']>;
-};
-
-export type ActivityEffectMutations = {
-  __typename?: 'ActivityEffectMutations';
-  create?: Maybe<CreateActivityEffect>;
-  update?: Maybe<UpdateActivityEffect>;
-  delete?: Maybe<DeleteActivityEffect>;
-};
-
-export type ActivityEffectMutationsCreateArgs = {
-  code?: Maybe<Scalars['String']>;
-  formula?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  stepItemVid: Scalars['UUID'];
-  stepVid: Scalars['UUID'];
-  trigger?: Maybe<Scalars['String']>;
-  vid?: Maybe<Scalars['UUID']>;
-};
-
-export type ActivityEffectMutationsUpdateArgs = {
-  code?: Maybe<Scalars['String']>;
-  formula?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  stepItemVid: Scalars['UUID'];
-  stepVid: Scalars['UUID'];
-  trigger?: Maybe<Scalars['String']>;
-  vid: Scalars['UUID'];
-};
-
-export type ActivityEffectMutationsDeleteArgs = {
-  stepItemVid: Scalars['UUID'];
-  stepVid: Scalars['UUID'];
-  vid: Scalars['UUID'];
-};
-
-export type ActivityLibraryCategory = {
-  __typename?: 'ActivityLibraryCategory';
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
-  parent?: Maybe<ActivityLibraryCategory>;
-};
-
 export type AlternativeDefinitionResult =
   | AlternativeDefinitions
-  | DistributionDefinitionErrors
-  | CommonErrors;
+  | CommonErrors
+  | DistributionDefinitionErrors;
 
 /** Результаты определения альтернативных способов задания распределения. */
 export type AlternativeDefinitions = {
@@ -108,46 +47,46 @@ export type AlternativeDefinitions = {
 
 export type Attachment = {
   __typename?: 'Attachment';
-  extension?: Maybe<Scalars['String']>;
-  uri?: Maybe<Scalars['String']>;
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  editedAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
-  createdBy?: Maybe<User>;
-  editedBy?: Maybe<User>;
-  comment?: Maybe<Scalars['String']>;
   category?: Maybe<AttachmentType>;
+  code?: Maybe<Scalars['String']>;
+  comment?: Maybe<Scalars['String']>;
   contentType?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Int']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  createdBy?: Maybe<User>;
+  editedAt?: Maybe<Scalars['DateTime']>;
+  editedBy?: Maybe<User>;
+  extension?: Maybe<Scalars['String']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
   projectId?: Maybe<Scalars['ID']>;
   size?: Maybe<Scalars['Int']>;
+  status?: Maybe<Scalars['Int']>;
+  uri?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type AttachmentType = {
   __typename?: 'AttachmentType';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type Attendee = {
   __typename?: 'Attendee';
-  user?: Maybe<User>;
   roles?: Maybe<Array<Maybe<ProjectRole>>>;
   status?: Maybe<AttendeeStatus>;
+  user?: Maybe<User>;
 };
 
 export enum AttendeeOrderBy {
   FirstName = 'FIRST_NAME',
-  Patronym = 'PATRONYM',
   LastName = 'LAST_NAME',
   Name = 'NAME',
+  Patronym = 'PATRONYM',
   Role = 'ROLE',
 }
 
@@ -160,27 +99,94 @@ export type Attribute = {
   __typename?: 'Attribute';
   /** Кодовое обозначение подсчётного параметра */
   code: Scalars['String'];
+  /** Разрядность подсчётного параметра */
+  decimalPlace?: Maybe<Scalars['Int']>;
+  /** Тип геологического объекта */
+  geoObjectFluidType: GeoObjectFluidType;
   /** Имя подсчётного параметра */
   name: Scalars['String'];
   /** Сокращенное имя или обозначение подсчётного параметра */
   shortName: Scalars['String'];
   /** Единицы измерения подсчётного параметра */
   units: Scalars['String'];
-  /** Разрядность подсчётного параметра */
-  decimalPlace?: Maybe<Scalars['Int']>;
+};
+
+export type AttributeDecimal = {
+  __typename?: 'AttributeDecimal';
+  code: Scalars['String'];
+  decimalPlace: Scalars['Int'];
 };
 
 export type AttributeInput = {
   /** Кодовое обозначение подсчётного параметра */
   code: Scalars['String'];
+  /** Разрядность подсчётного параметра */
+  decimalPlace?: InputMaybe<Scalars['Int']>;
+  /** Тип геологического объекта */
+  geoObjectFluidType: GeoObjectFluidType;
   /** Имя подсчётного параметра */
   name: Scalars['String'];
   /** Сокращенное имя или обозначение подсчётного параметра */
   shortName: Scalars['String'];
   /** Единицы измерения подсчётного параметра */
   units: Scalars['String'];
-  /** Разрядность подсчётного параметра */
-  decimalPlace?: Maybe<Scalars['Int']>;
+};
+
+/** Список атрибутов геологических объектов. */
+export type AttributeList = {
+  __typename?: 'AttributeList';
+  result?: Maybe<Array<Maybe<Attribute>>>;
+};
+
+/** Результат изменения списка атрибутов геологических объектов. */
+export type AttributeListOrError = AttributeList | DetailErrors | Error;
+
+/** Мутации атрибутов геологических объектов. */
+export type AttributeMutations = {
+  __typename?: 'AttributeMutations';
+  create?: Maybe<AttributeListOrError>;
+  delete?: Maybe<AttributeListOrError>;
+  move?: Maybe<AttributeListOrError>;
+  update?: Maybe<AttributeListOrError>;
+  updateDecimal?: Maybe<NoneOrError>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type AttributeMutationsCreateArgs = {
+  name: Scalars['String'];
+  place?: InputMaybe<Scalars['Int']>;
+  shortName: Scalars['String'];
+  units: Scalars['String'];
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type AttributeMutationsMoveArgs = {
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type AttributeMutationsUpdateArgs = {
+  name?: InputMaybe<Scalars['String']>;
+  shortName?: InputMaybe<Scalars['String']>;
+  units?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type AttributeMutationsUpdateDecimalArgs = {
+  code?: InputMaybe<Scalars['String']>;
+  decimalPlace?: InputMaybe<Scalars['Int']>;
+};
+
+export type AttributeResult = {
+  __typename?: 'AttributeResult';
+  code: Scalars['String'];
+  decimal: Scalars['Int'];
+  geoType: Scalars['String'];
+  name: Scalars['String'];
+  shortName: Scalars['String'];
+  units: Scalars['String'];
+  viewType: Scalars['String'];
+  visible: VisibleResult;
 };
 
 export type AttributeValue = {
@@ -193,404 +199,104 @@ export type AttributeValue = {
 };
 
 export type AttributeValueVisibleValueArgs = {
-  visibleRank?: Maybe<Scalars['Int']>;
+  visibleRank?: InputMaybe<Scalars['Int']>;
 };
 
 export type AttributeValueInput = {
   /** Кодовое обозначение подсчётного параметра */
   code: Scalars['String'];
-  distribution?: Maybe<DistributionInput>;
+  distribution?: InputMaybe<DistributionInput>;
 };
 
-/** Значение цены относительно года. */
-export type AverageAnnualPriceInput = {
-  /** Год */
-  year: Scalars['Int'];
-  /** Цена */
-  price: Scalars['Float'];
-  /** Единицы измерения */
-  units?: Maybe<Scalars['String']>;
-};
-
-export type AverageAnnualPriceType = {
-  __typename?: 'AverageAnnualPriceType';
-  /** Год */
-  year?: Maybe<Scalars['Int']>;
-  /** Цена */
-  price?: Maybe<Scalars['Float']>;
-};
-
-export type AverageAnnualPriceTypeInput = {
-  /** Год */
-  year?: Maybe<Scalars['Int']>;
-  /** Цена */
-  price?: Maybe<Scalars['Float']>;
+export type AttributeValueResult = {
+  __typename?: 'AttributeValueResult';
+  code: Scalars['String'];
+  percentiles: Array<Scalars['Int']>;
+  values: Array<Scalars['String']>;
 };
 
 export type CalculatedOrError =
   | CalculationResult
-  | TableErrors
+  | DetailError
   | DistributionDefinitionErrors
-  | DetailError;
-
-export type Calculation = {
-  __typename?: 'Calculation';
-  /** Название */
-  name: Scalars['String'];
-  /** Цены */
-  prices: Array<Maybe<AverageAnnualPriceType>>;
-};
+  | TableErrors;
 
 export type CalculationProperties = {
   __typename?: 'CalculationProperties';
-  method?: Maybe<MethodTypeEnum>;
   iterationNumber?: Maybe<Scalars['Int']>;
+  method?: Maybe<MethodTypeEnum>;
   percentiles?: Maybe<Array<Maybe<DefaultPercentilesEnum>>>;
 };
 
 export type CalculationPropertiesInputType = {
   /** Количество итераций */
   iterationNumber: Scalars['Int'];
-  /** Список процентилей */
-  percentiles: Array<Maybe<DefaultPercentilesEnum>>;
   /** Метод расчёта */
   method: MethodTypeEnum;
+  /** Список процентилей */
+  percentiles: Array<InputMaybe<DefaultPercentilesEnum>>;
 };
 
 export type CalculationResult = {
   __typename?: 'CalculationResult';
-  /** Архив с результатом вычислений.             Доступен по url /files/calculation_result/<resultId> */
-  resultId?: Maybe<Scalars['ID']>;
+  /** Идентификатор процесса расчёта.             Информацию о прогрессе выполнения можно получить по url             ws://{host}/processes/{project_vid}/{process_id} */
+  processId?: Maybe<Scalars['UUID']>;
 };
 
-export type CanvasMutations = {
-  __typename?: 'CanvasMutations';
-  create?: Maybe<CreateCanvasNode>;
-  update?: Maybe<UpdateCanvasNode>;
-  delete?: Maybe<DeleteCanvasNode>;
+export type CdfPoint = {
+  __typename?: 'CdfPoint';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
 };
 
-export type CanvasMutationsCreateArgs = {
-  childrenVids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  code?: Maybe<Scalars['String']>;
-  nodeRef?: Maybe<Scalars['UUID']>;
-  nodeType: Scalars['String'];
-  parentVids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  position?: Maybe<Array<Maybe<Scalars['Float']>>>;
-  title?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Float']>;
-};
-
-export type CanvasMutationsUpdateArgs = {
-  childrenVids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  code?: Maybe<Scalars['String']>;
-  nodeRef?: Maybe<Scalars['UUID']>;
-  nodeType?: Maybe<Scalars['String']>;
-  parentVids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  position?: Maybe<Array<Maybe<Scalars['Float']>>>;
-  title?: Maybe<Scalars['String']>;
-  vid: Scalars['UUID'];
-  width?: Maybe<Scalars['Float']>;
-};
-
-export type CanvasMutationsDeleteArgs = {
-  vid: Scalars['UUID'];
-};
-
-/** Узлы логики проекта (шаги сценария, мероприятия, объекты, группы объектов). */
-export type CanvasNode = {
-  __typename?: 'CanvasNode';
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  nodeRef?: Maybe<Scalars['ID']>;
-  nodeType?: Maybe<Scalars['String']>;
-  position?: Maybe<Array<Maybe<Scalars['Float']>>>;
-  title?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Float']>;
-  children?: Maybe<Array<Maybe<CanvasNode>>>;
-  parents?: Maybe<Array<Maybe<CanvasNode>>>;
-};
-
-export type Capex = {
-  __typename?: 'Capex';
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-  capexExpenseGroupList?: Maybe<CapexExpenseGroupListOrError>;
-  capexGlobalValueList?: Maybe<CapexGlobalValueListOrError>;
-  capexExpenseGroup?: Maybe<CapexExpenseGroupOrError>;
-  capexGlobalValue?: Maybe<CapexGlobalValueOrError>;
-};
-
-export type CapexCapexExpenseGroupArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type CapexCapexGlobalValueArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type CapexExpense = {
-  __typename?: 'CapexExpense';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Array<Maybe<CapexYearValueType>>>;
-  valueTotal?: Maybe<Scalars['Float']>;
-  yearValue?: Maybe<YearValueOrError>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type CapexExpenseYearValueArgs = {
-  year?: Maybe<Scalars['Int']>;
-};
-
-export type CapexExpenseGroup = {
-  __typename?: 'CapexExpenseGroup';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  valueTotal?: Maybe<Scalars['Float']>;
-  capexExpenseList?: Maybe<CapexExpenseListOrError>;
-  capexExpense?: Maybe<CapexExpenseOrError>;
-  totalValueByYear?: Maybe<Array<Maybe<CapexYearValueType>>>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type CapexExpenseGroupCapexExpenseArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type CapexExpenseGroupList = {
-  __typename?: 'CapexExpenseGroupList';
-  capexExpenseGroupList?: Maybe<Array<Maybe<CapexExpenseGroup>>>;
-};
-
-export type CapexExpenseGroupListOrError = CapexExpenseGroupList | Error;
-
-export type CapexExpenseGroupOrDiffOrError = CapexExpenseGroup | Error;
-
-export type CapexExpenseGroupOrError = CapexExpenseGroup | Error;
-
-export type CapexExpenseList = {
-  __typename?: 'CapexExpenseList';
-  capexExpenseList?: Maybe<Array<Maybe<CapexExpense>>>;
-};
-
-export type CapexExpenseListOrError = CapexExpenseList | Error;
-
-export type CapexExpenseOrDiffOrError = CapexExpense | Error;
-
-export type CapexExpenseOrError = CapexExpense | Error;
-
-export type CapexGlobalValue = {
-  __typename?: 'CapexGlobalValue';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-  unit?: Maybe<Scalars['String']>;
-};
-
-export type CapexGlobalValueList = {
-  __typename?: 'CapexGlobalValueList';
-  capexGlobalValueList?: Maybe<Array<Maybe<CapexGlobalValue>>>;
-};
-
-export type CapexGlobalValueListOrError = CapexGlobalValueList | Error;
-
-export type CapexGlobalValueOrDiffOrError = CapexGlobalValue | Error;
-
-export type CapexGlobalValueOrError = CapexGlobalValue | Error;
-
-export type CapexMutation = {
-  __typename?: 'CapexMutation';
-  createCapexExpenseGroup?: Maybe<CreateCapexExpenseGroup>;
-  changeCapexExpenseGroup?: Maybe<ChangeCapexExpenseGroup>;
-  deleteCapexExpenseGroup?: Maybe<DeleteCapexExpenseGroup>;
-  setCapexExpenseYearValue?: Maybe<SetCapexExpenseYearValue>;
-  createCapexExpense?: Maybe<CreateCapexExpense>;
-  changeCapexExpense?: Maybe<ChangeCapexExpense>;
-  deleteCapexExpense?: Maybe<DeleteCapexExpense>;
-  createCapexGlobalValue?: Maybe<CreateCapexGlobalValue>;
-  updateCapexGlobalValue?: Maybe<UpdateCapexGlobalValue>;
-  deleteCapexGlobalValue?: Maybe<DeleteCapexGlobalValue>;
-};
-
-export type CapexMutationCreateCapexExpenseGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type CapexMutationChangeCapexExpenseGroupArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type CapexMutationDeleteCapexExpenseGroupArgs = {
-  capexExpenseGroupId?: Maybe<Scalars['ID']>;
-};
-
-export type CapexMutationSetCapexExpenseYearValueArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type CapexMutationCreateCapexExpenseArgs = {
-  capexExpenseGroupId?: Maybe<Scalars['ID']>;
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type CapexMutationChangeCapexExpenseArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type CapexMutationDeleteCapexExpenseArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-};
-
-export type CapexMutationCreateCapexGlobalValueArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type CapexMutationUpdateCapexGlobalValueArgs = {
-  capexGlobalValueId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type CapexMutationDeleteCapexGlobalValueArgs = {
-  capexGlobalValueId: Scalars['ID'];
-};
-
-export type CapexOrDiffOrError = Capex | Error;
-
-export type CapexOrError = Capex | Error;
-
-export type CapexYearValueType = {
-  __typename?: 'CapexYearValueType';
-  year?: Maybe<Scalars['Int']>;
-  value?: Maybe<Scalars['Float']>;
+export type Cell = {
+  __typename?: 'Cell';
+  code: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type CellAddress = {
   __typename?: 'CellAddress';
-  /** id доменного объекта (строка) */
-  vid: Scalars['UUID'];
   /** код аттрибута (столбца) */
   attribute: Scalars['String'];
+  /** id доменного объекта (строка) */
+  vid: Scalars['UUID'];
 };
 
 export type CellAddressInput = {
-  /** id доменного объекта (строка) */
-  vid: Scalars['UUID'];
   /** код аттрибута (столбца) */
   attribute: Scalars['String'];
+  /** id доменного объекта (строка) */
+  vid: Scalars['UUID'];
 };
 
-export type ChangeCapexExpense = {
-  __typename?: 'ChangeCapexExpense';
-  totalValueByYear?: Maybe<Array<Maybe<CapexYearValueType>>>;
-  capexExpense?: Maybe<CapexExpenseOrDiffOrError>;
+export type CellL = {
+  __typename?: 'CellL';
+  code: Scalars['String'];
+  value: Scalars['String'];
 };
 
-export type ChangeCapexExpenseGroup = {
-  __typename?: 'ChangeCapexExpenseGroup';
-  capexExpenseGroup?: Maybe<CapexExpenseGroupOrDiffOrError>;
+/** Результаты хи квадрат теста восстановленного распределения и выборки. */
+export type ChiSquareDistributionBySample = {
+  __typename?: 'ChiSquareDistributionBySample';
+  /** Тип распределения */
+  type: DistributionTypes;
+  /** Статистика хи квадрат теста */
+  value?: Maybe<Scalars['Float']>;
 };
 
-export type ChangeMacroparameter = {
-  __typename?: 'ChangeMacroparameter';
-  macroparameter?: Maybe<MacroparameterOrDiffOrError>;
-};
-
-export type ChangeMacroparameterGroup = {
-  __typename?: 'ChangeMacroparameterGroup';
-  macroparameterGroup?: Maybe<MacroparameterGroupOrDiffOrError>;
-};
-
-export type ChangeMacroparameterSet = {
-  __typename?: 'ChangeMacroparameterSet';
-  macroparameterSet?: Maybe<MacroparameterSetOrDiffOrError>;
-};
-
-export type ChangeOpexAutoexport = {
-  __typename?: 'ChangeOpexAutoexport';
-  autoexport?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type ChangeOpexAutoexportExpense = {
-  __typename?: 'ChangeOpexAutoexportExpense';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type ChangeOpexCase = {
-  __typename?: 'ChangeOpexCase';
-  opexCase?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type ChangeOpexCaseExpense = {
-  __typename?: 'ChangeOpexCaseExpense';
-  totalValueByYear?: Maybe<Array<Maybe<OpexYearValue>>>;
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type ChangeOpexMkos = {
-  __typename?: 'ChangeOpexMkos';
-  mkos?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type ChangeOpexMkosExpense = {
-  __typename?: 'ChangeOpexMkosExpense';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type ClearMacroparameterValue = {
-  __typename?: 'ClearMacroparameterValue';
-  macroparameter?: Maybe<MacroparameterOrDiffOrError>;
-};
-
-export type CommonChapterType = {
-  __typename?: 'CommonChapterType';
-  macroparameters?: Maybe<Array<Maybe<Macroparameter>>>;
-  profiles?: Maybe<Array<Maybe<TaxDnsProfileType>>>;
-};
-
-export type CommonChapterTypeMacroparametersArgs = {
-  id?: Maybe<Scalars['String']>;
+export type Child = {
+  __typename?: 'Child';
+  code?: Maybe<Scalars['String']>;
+  decimal: Scalars['Int'];
   name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
 };
 
-export type CommonChapterTypeProfilesArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
+export type ChildL = {
+  __typename?: 'ChildL';
+  code: Scalars['String'];
+  decimal: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 /** Общая ошибка. */
@@ -598,6 +304,8 @@ export type CommonError = RbErrorInterface & {
   __typename?: 'CommonError';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: RbErrorCodes;
+  /** Индекс концепции, к которой относится ошибка */
+  conceptionIdx?: Maybe<Scalars['Int']>;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
 };
@@ -623,190 +331,232 @@ export type CommonRiskInput = {
   value: Scalars['Float'];
 };
 
+/** Мутации общих рисков. */
+export type CommonRiskMutations = {
+  __typename?: 'CommonRiskMutations';
+  delete?: Maybe<NoneOrError>;
+  set?: Maybe<CommonRiskOrError>;
+};
+
+/** Мутации общих рисков. */
+export type CommonRiskMutationsSetArgs = {
+  objects: Array<InputMaybe<Scalars['String']>>;
+  riskType: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+/** Результат создания/обновления группы общего риска. */
+export type CommonRiskOrError =
+  | CommonRisk
+  | DetailErrors
+  | Error
+  | ValidationError;
+
 export type Conception = {
   __typename?: 'Conception';
-  /** Наименование концепции */
-  name: Scalars['String'];
   /** Описание концепции */
   description: Scalars['String'];
+  /** Наименование концепции */
+  name: Scalars['String'];
   /** Вероятность концепции */
   probability?: Maybe<Scalars['Float']>;
   structure: ProjectStructure;
 };
 
+export type ConceptionFilter = {
+  __typename?: 'ConceptionFilter';
+  columnCode: Scalars['String'];
+  numberFilter?: Maybe<ConceptionNumFilter>;
+  stringFilter?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
+export type ConceptionFilterIn = {
+  columnCode: Scalars['String'];
+  numberFilter?: InputMaybe<ConceptionNumFilterIn>;
+  stringFilter?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
 export type ConceptionInput = {
-  /** Наименование концепции */
-  name: Scalars['String'];
   /** Описание концепции */
   description: Scalars['String'];
+  /** Наименование концепции */
+  name: Scalars['String'];
   /** Вероятность концепции */
-  probability?: Maybe<Scalars['Float']>;
+  probability?: InputMaybe<Scalars['Float']>;
   structure: ProjectStructureInput;
 };
 
+export type ConceptionInputType = {
+  conceptionIdx?: InputMaybe<Scalars['Int']>;
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  probability?: InputMaybe<Scalars['Float']>;
+  vid?: InputMaybe<Scalars['UUID']>;
+};
+
+export type ConceptionList = {
+  __typename?: 'ConceptionList';
+  conceptions?: Maybe<Array<Maybe<Conception>>>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutations = {
+  __typename?: 'ConceptionMutations';
+  attribute?: Maybe<AttributeMutations>;
+  commonRisk?: Maybe<CommonRiskMutations>;
+  correlationElement?: Maybe<CorrelationMutations>;
+  create?: Maybe<ConceptionOrError>;
+  delete?: Maybe<NoneOrError>;
+  domainEntity?: Maybe<DomainEntityMutations>;
+  domainObject?: Maybe<RbDomainObjectMutations>;
+  risk?: Maybe<RiskMutations>;
+  saveStructure?: Maybe<SavedOrError>;
+  setConceptionFilter?: Maybe<NoneOrError>;
+  update?: Maybe<ConceptionOrError>;
+  updateAll?: Maybe<ConceptionsOrError>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsAttributeArgs = {
+  code?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsCommonRiskArgs = {
+  group?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsCorrelationElementArgs = {
+  cells: Array<CellAddressInput>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsCreateArgs = {
+  description?: InputMaybe<Scalars['String']>;
+  existConceptionIdx?: InputMaybe<Scalars['Int']>;
+  name: Scalars['String'];
+  probability: Scalars['Float'];
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsDomainEntityArgs = {
+  code?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsDomainObjectArgs = {
+  vid?: InputMaybe<Scalars['UUID']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsRiskArgs = {
+  code?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsSaveStructureArgs = {
+  conceptionStructure: ProjectStructureInput;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsSetConceptionFilterArgs = {
+  conFilter?: InputMaybe<ConceptionFilterIn>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsUpdateArgs = {
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  probability?: InputMaybe<Scalars['Float']>;
+};
+
+/** Мутации концепций. */
+export type ConceptionMutationsUpdateAllArgs = {
+  conceptions?: InputMaybe<Array<InputMaybe<ConceptionInputType>>>;
+};
+
+/** Inner Filter Schema for CollectionFilters. */
+export type ConceptionNumFilter = {
+  __typename?: 'ConceptionNumFilter';
+  end?: Maybe<Scalars['Float']>;
+  start?: Maybe<Scalars['Float']>;
+};
+
+/** Inner Filter Schema for CollectionFilters. */
+export type ConceptionNumFilterIn = {
+  end?: InputMaybe<Scalars['Float']>;
+  start?: InputMaybe<Scalars['Float']>;
+};
+
+/** Результат создания или изменения концепции. */
+export type ConceptionOrError = Conception | DetailErrors | Error;
+
+export type ConceptionQueries = {
+  __typename?: 'ConceptionQueries';
+  conceptionFilter?: Maybe<ConceptionFilter>;
+};
+
+/** Результат изменения набора концепций концепции. */
+export type ConceptionsOrError = ConceptionList | DetailErrors | Error;
+
 export type CorrelationElement = {
   __typename?: 'CorrelationElement';
-  /** Значение корреляции между ячейками */
-  value: Scalars['Float'];
   /** Пара ячеек таблицы */
   cells?: Maybe<Array<Maybe<CellAddress>>>;
+  /** Значение корреляции между ячейками */
+  value: Scalars['Float'];
 };
 
 export type CorrelationElementInput = {
-  /** Значение корреляции между ячейками */
-  value: Scalars['Float'];
   /** Пара ячеек таблицы */
   cells: Array<CellAddressInput>;
+  /** Значение корреляции между ячейками */
+  value: Scalars['Float'];
+};
+
+/** Результат изменения корреляции элементов. */
+export type CorrelationElementOrError =
+  | CorrelationElement
+  | DetailErrors
+  | Error;
+
+/** Мутации корреляций. */
+export type CorrelationMutations = {
+  __typename?: 'CorrelationMutations';
+  set?: Maybe<CorrelationElementOrError>;
+};
+
+/** Мутации корреляций. */
+export type CorrelationMutationsSetArgs = {
+  value?: InputMaybe<Scalars['Float']>;
 };
 
 export type Country = {
   __typename?: 'Country';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
+  coordinateSystems?: Maybe<Array<Maybe<Scalars['String']>>>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
-  coordinateSystems?: Maybe<Array<Maybe<Scalars['String']>>>;
-};
-
-export type CreateActivityEffect = {
-  __typename?: 'CreateActivityEffect';
-  result?: Maybe<ActivityEffect>;
-};
-
-export type CreateCanvasNode = {
-  __typename?: 'CreateCanvasNode';
-  result?: Maybe<CanvasNode>;
-};
-
-export type CreateCapex = {
-  __typename?: 'CreateCapex';
-  capex?: Maybe<CapexOrDiffOrError>;
-};
-
-export type CreateCapexExpense = {
-  __typename?: 'CreateCapexExpense';
-  capexExpense?: Maybe<CapexExpenseOrDiffOrError>;
-};
-
-export type CreateCapexExpenseGroup = {
-  __typename?: 'CreateCapexExpenseGroup';
-  capexExpenseGroup?: Maybe<CapexExpenseGroupOrDiffOrError>;
-};
-
-export type CreateCapexGlobalValue = {
-  __typename?: 'CreateCapexGlobalValue';
-  capexGlobalValue?: Maybe<CapexGlobalValueOrDiffOrError>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type CreateDomainGroupResult = {
   __typename?: 'CreateDomainGroupResult';
+  formula?: Maybe<Scalars['String']>;
   ok?: Maybe<Scalars['Boolean']>;
   vid?: Maybe<Scalars['UUID']>;
   vids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  formula?: Maybe<Scalars['String']>;
 };
-
-export type CreateMacroparameter = {
-  __typename?: 'CreateMacroparameter';
-  macroparameter?: Maybe<MacroparameterOrDiffOrError>;
-};
-
-export type CreateMacroparameterGroup = {
-  __typename?: 'CreateMacroparameterGroup';
-  macroparameterGroup?: Maybe<MacroparameterGroupOrDiffOrError>;
-};
-
-export type CreateMacroparameterSet = {
-  __typename?: 'CreateMacroparameterSet';
-  macroparameterSet?: Maybe<MacroparameterSetOrDiffOrError>;
-};
-
-export type CreateNetback = {
-  __typename?: 'CreateNetback';
-  netback?: Maybe<NetbackPriceOrDiffOrError>;
-};
-
-export type CreateOpexAutoexportExpense = {
-  __typename?: 'CreateOpexAutoexportExpense';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type CreateOpexCase = {
-  __typename?: 'CreateOpexCase';
-  opexCase?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type CreateOpexCaseExpense = {
-  __typename?: 'CreateOpexCaseExpense';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type CreateOpexMkosExpense = {
-  __typename?: 'CreateOpexMkosExpense';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type CreateProduct = {
-  __typename?: 'CreateProduct';
-  product?: Maybe<ProductOrDiffOrError>;
-};
-
-export type CreateProductType = {
-  __typename?: 'CreateProductType';
-  productType?: Maybe<ProductTypeOrDiffOrError>;
-};
-
-/** Создание шага сценария. */
-export type CreateScenarioStep = {
-  __typename?: 'CreateScenarioStep';
-  result?: Maybe<ScenarioStep>;
-};
-
-/** Создание элемента шага сценария. */
-export type CreateScenarioStepItem = {
-  __typename?: 'CreateScenarioStepItem';
-  result?: Maybe<ScenarioStepItem>;
-};
-
-/** An enumeration. */
-export enum CurrentTaxMode {
-  Nds = 'NDS',
-  Ndd = 'NDD',
-}
 
 /** An enumeration. */
 export enum DefaultPercentilesEnum {
-  P90 = 'P90',
-  P50 = 'P50',
   P10 = 'P10',
+  P50 = 'P50',
+  P90 = 'P90',
 }
-
-export type DeleteActivityEffect = {
-  __typename?: 'DeleteActivityEffect';
-  ok?: Maybe<Scalars['Boolean']>;
-};
-
-export type DeleteCanvasNode = {
-  __typename?: 'DeleteCanvasNode';
-  ok?: Maybe<Scalars['Boolean']>;
-};
-
-export type DeleteCapexExpense = {
-  __typename?: 'DeleteCapexExpense';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteCapexExpenseGroup = {
-  __typename?: 'DeleteCapexExpenseGroup';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteCapexGlobalValue = {
-  __typename?: 'DeleteCapexGlobalValue';
-  result?: Maybe<UuidOrError>;
-};
 
 export type DeleteDomainGroupResult = {
   __typename?: 'DeleteDomainGroupResult';
@@ -818,77 +568,17 @@ export type DeleteDomainObjectMutation = {
   ok?: Maybe<Scalars['Boolean']>;
 };
 
-export type DeleteMacroparameter = {
-  __typename?: 'DeleteMacroparameter';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteMacroparameterGroup = {
-  __typename?: 'DeleteMacroparameterGroup';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteMacroparameterSet = {
-  __typename?: 'DeleteMacroparameterSet';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteNetback = {
-  __typename?: 'DeleteNetback';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteOpexAutoexportExpense = {
-  __typename?: 'DeleteOpexAutoexportExpense';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteOpexCase = {
-  __typename?: 'DeleteOpexCase';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteOpexCaseExpense = {
-  __typename?: 'DeleteOpexCaseExpense';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteOpexMkosExpense = {
-  __typename?: 'DeleteOpexMkosExpense';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteProduct = {
-  __typename?: 'DeleteProduct';
-  result?: Maybe<UuidOrError>;
-};
-
-export type DeleteProductType = {
-  __typename?: 'DeleteProductType';
-  result?: Maybe<UuidOrError>;
-};
-
-/** Удаление шага сценария. */
-export type DeleteScenarioStep = {
-  __typename?: 'DeleteScenarioStep';
-  ok?: Maybe<Scalars['Boolean']>;
-};
-
-/** Удаление элемента шага сценария. */
-export type DeleteScenarioStepItem = {
-  __typename?: 'DeleteScenarioStepItem';
-  ok?: Maybe<Scalars['Boolean']>;
-};
-
 /** Ошибка с дополнительной информацией. */
 export type DetailError = RbErrorInterface & {
   __typename?: 'DetailError';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: RbErrorCodes;
-  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
-  message: Scalars['String'];
+  /** Индекс концепции, к которой относится ошибка */
+  conceptionIdx?: Maybe<Scalars['Int']>;
   /** Детальная информация об ошибке */
   details?: Maybe<Scalars['String']>;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
 };
 
 export type DetailErrors = {
@@ -896,82 +586,159 @@ export type DetailErrors = {
   errors: Array<DetailError>;
 };
 
+export type DevelopmentScenarioL = {
+  __typename?: 'DevelopmentScenarioL';
+  declineRate: Array<Maybe<RowL>>;
+  economics: Array<Maybe<CellL>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+};
+
+export type DevelopmentScenarioVariantL = {
+  __typename?: 'DevelopmentScenarioVariantL';
+  declineRateHeaders: Array<Maybe<HeaderL>>;
+  economicsHeaders: Array<Maybe<HeaderL>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  scenarios: Array<Maybe<DevelopmentScenarioL>>;
+};
+
 /** Результаты вычисления заданного дискретного распределения. */
 export type DiscreteDistributionChart = {
   __typename?: 'DiscreteDistributionChart';
+  /** Правая область значения распределения */
+  domainMaxBound?: Maybe<Scalars['Float']>;
+  /** Левая область значения распределения */
+  domainMinBound?: Maybe<Scalars['Float']>;
+  /** Правая граница распределения */
+  maxBound?: Maybe<Scalars['Float']>;
+  /** Левая граница распределения */
+  minBound?: Maybe<Scalars['Float']>;
+  /** Точки процентилей */
+  percentiles: Array<Percentile>;
   /** График функции вероятности распределения */
   pmf: Array<Point>;
   /** Функция надежности (1 - cdf) */
   sf: Array<Point>;
-  /** Точки процентилей */
-  percentiles: Array<Percentile>;
   /** Отображаемый в ячейке процентиль */
   visiblePercentile: Percentile;
-  /** Левая область значения распределения */
-  domainMinBound?: Maybe<Scalars['Float']>;
-  /** Правая область значения распределения */
-  domainMaxBound?: Maybe<Scalars['Float']>;
-  /** Левая граница распределения */
-  minBound?: Maybe<Scalars['Float']>;
-  /** Правая граница распределения */
-  maxBound?: Maybe<Scalars['Float']>;
 };
 
 /** Параметры распределения. */
 export type Distribution = {
   __typename?: 'Distribution';
-  /** Тип распределения */
-  type: DistributionTypes;
   /** Способ задания распределения */
   definition: DistributionDefinitionTypes;
-  /** Параметры распределения */
-  parameters: Array<Maybe<DistributionParameter>>;
-  /** Нижняя граница усечения */
-  minBound?: Maybe<Scalars['Float']>;
   /** Верхняя граница усечения */
   maxBound?: Maybe<Scalars['Float']>;
+  /** Нижняя граница усечения */
+  minBound?: Maybe<Scalars['Float']>;
+  /** Параметры распределения */
+  parameters: Array<Maybe<DistributionParameter>>;
   /** Выборка случайной величины */
   sample?: Maybe<Array<Maybe<Scalars['Float']>>>;
   /** ID файла-источника */
   sourceVid?: Maybe<Scalars['UUID']>;
+  /** Тип распределения */
+  type: DistributionTypes;
+};
+
+/** Таблица статистики по перцентилям восстановленного распределения и выборки. */
+export type DistributionBySampleStatistics = {
+  __typename?: 'DistributionBySampleStatistics';
+  headers: Array<Header>;
+  rows: Array<Row>;
 };
 
 /** Результаты вычисления заданного непрерывного распределения. */
 export type DistributionChart = {
   __typename?: 'DistributionChart';
-  /** График функции плотности распределения */
-  pdf: Array<Point>;
-  /** Функция надежности (1 - cdf) */
-  sf: Array<Point>;
-  /** Точки процентилей */
-  percentiles: Array<Percentile>;
-  /** Отображаемый в ячейке процентиль */
-  visiblePercentile: Percentile;
-  /** Левая область значения распределения */
-  domainMinBound?: Maybe<Scalars['Float']>;
   /** Правая область значения распределения */
   domainMaxBound?: Maybe<Scalars['Float']>;
-  /** Левая граница распределения */
-  minBound?: Maybe<Scalars['Float']>;
+  /** Левая область значения распределения */
+  domainMinBound?: Maybe<Scalars['Float']>;
   /** Правая граница распределения */
   maxBound?: Maybe<Scalars['Float']>;
+  /** Левая граница распределения */
+  minBound?: Maybe<Scalars['Float']>;
+  /** График функции плотности распределения */
+  pdf: Array<Point>;
+  /** Точки процентилей */
+  percentiles: Array<Percentile>;
+  /** Функция надежности (1 - cdf) */
+  sf: Array<Point>;
+  /** Отображаемый в ячейке процентиль */
+  visiblePercentile: Percentile;
 };
 
 export type DistributionChartResult =
-  | DistributionChart
-  | DiscreteDistributionChart
   | CommonErrors
+  | DiscreteDistributionChart
+  | DistributionChart
   | DistributionDefinitionErrors;
+
+/** Данные для построение графиков или диаграмм распределения. */
+export type DistributionChartUnion =
+  | DiscreteDistributionChart
+  | DistributionChart;
+
+/** Пространство имен для работы с подбром распределения по данным. */
+export type DistributionCustomDataSelection = {
+  __typename?: 'DistributionCustomDataSelection';
+  /** Хи квадрат между распределеним и исходными данными */
+  chisquareTable?: Maybe<Array<ChiSquareDistributionBySample>>;
+  /** Оценка заданных параметров и распределения по данным */
+  estimateParameters?: Maybe<Array<DistributionParameter>>;
+  /** Гистограмма распределения и исходных данных */
+  plotHistogram?: Maybe<PlotObject>;
+  /** Перцентили распределения и исходных данных */
+  statisticsTable?: Maybe<DistributionBySampleStatistics>;
+};
+
+/** Пространство имен для работы с подбром распределения по данным. */
+export type DistributionCustomDataSelectionChisquareTableArgs = {
+  attributeCode?: InputMaybe<Scalars['String']>;
+  conception?: InputMaybe<Scalars['String']>;
+  domainObjectId?: InputMaybe<Scalars['String']>;
+};
+
+/** Пространство имен для работы с подбром распределения по данным. */
+export type DistributionCustomDataSelectionEstimateParametersArgs = {
+  attributeCode?: InputMaybe<Scalars['String']>;
+  conception?: InputMaybe<Scalars['String']>;
+  definition?: InputMaybe<Scalars['String']>;
+  distributionType?: InputMaybe<Scalars['String']>;
+  domainObjectId?: InputMaybe<Scalars['String']>;
+};
+
+/** Пространство имен для работы с подбром распределения по данным. */
+export type DistributionCustomDataSelectionPlotHistogramArgs = {
+  attributeCode?: InputMaybe<Scalars['String']>;
+  conception?: InputMaybe<Scalars['String']>;
+  distributionType?: InputMaybe<Scalars['String']>;
+  domainObjectId?: InputMaybe<Scalars['String']>;
+  hideDistribution?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** Пространство имен для работы с подбром распределения по данным. */
+export type DistributionCustomDataSelectionStatisticsTableArgs = {
+  attributeCode?: InputMaybe<Scalars['String']>;
+  conception?: InputMaybe<Scalars['String']>;
+  distributionType?: InputMaybe<Scalars['String']>;
+  domainObjectId?: InputMaybe<Scalars['String']>;
+};
 
 /** Ошибка задания распределения. */
 export type DistributionDefinitionError = RbErrorInterface & {
   __typename?: 'DistributionDefinitionError';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: RbErrorCodes;
-  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
-  message: Scalars['String'];
+  /** Индекс концепции, к которой относится ошибка */
+  conceptionIdx?: Maybe<Scalars['Int']>;
   /** Список параметров задания распределения, к которым относится ошибка */
   fields: Array<Scalars['String']>;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
 };
 
 /** Список ошибок задания распределения. */
@@ -982,6 +749,64 @@ export type DistributionDefinitionErrors = {
 
 /** Способы задания распределений. */
 export enum DistributionDefinitionTypes {
+  /** Через альфа, бета, минимум и максимум */
+  AlphaBetaMinMax = 'ALPHA_BETA_MIN_MAX',
+  /** Через логарифмическое среднее и два процентиля */
+  ArmeanTwoPercentiles = 'ARMEAN_TWO_PERCENTILES',
+  /** Через логарифмическое среднее и два процентиля (P90 и P10) */
+  ArmeanTwoPercentilesP90P10 = 'ARMEAN_TWO_PERCENTILES_P90_P10',
+  /** Константа */
+  Constant = 'CONSTANT',
+  /** Через четыре процентиля */
+  FourPercentiles = 'FOUR_PERCENTILES',
+  /** Через четыре процентиля (P90, P75, P25 и P10) */
+  FourPercentilesP90P75P25P10 = 'FOUR_PERCENTILES_P90_P75_P25_P10',
+  /** Через четыре процентиля (P95, P90, P10 и P5) */
+  FourPercentilesP95P90P10P5 = 'FOUR_PERCENTILES_P95_P90_P10_P5',
+  /** Через расположение, арифметическое среднее и арифметическое стандартное отклонение */
+  LocationArmeanArsd = 'LOCATION_ARMEAN_ARSD',
+  /** Через расположение, арифметическое среднее и один процентиль */
+  LocationArmeanOnePercentile = 'LOCATION_ARMEAN_ONE_PERCENTILE',
+  /** Через расположение, арифметическое среднее и один процентиль P10 */
+  LocationArmeanOnePercentileP10 = 'LOCATION_ARMEAN_ONE_PERCENTILE_P10',
+  /** Через расположение, арифметическое среднее и один процентиль P90 */
+  LocationArmeanOnePercentileP90 = 'LOCATION_ARMEAN_ONE_PERCENTILE_P90',
+  /** Через расположение, геометрическое среднее и геометрическое стандартное отклонение */
+  LocationGeommeanGeomsd = 'LOCATION_GEOMMEAN_GEOMSD',
+  /** Через расположение, логарифмическое среднее и логарифмическое стандартное отклонение */
+  LocationLogmeanLogsd = 'LOCATION_LOGMEAN_LOGSD',
+  /** Через расположение, логарифмическое среднее и один процентиль */
+  LocationLogmeanOnePercentile = 'LOCATION_LOGMEAN_ONE_PERCENTILE',
+  /** Через расположение, логарифмическое среднее и один процентиль P10 */
+  LocationLogmeanOnePercentileP10 = 'LOCATION_LOGMEAN_ONE_PERCENTILE_P10',
+  /** Через расположение, логарифмическое среднее и один процентиль P90 */
+  LocationLogmeanOnePercentileP90 = 'LOCATION_LOGMEAN_ONE_PERCENTILE_P90',
+  /** Через количество вариантов и сдвиг */
+  LocationNumber = 'LOCATION_NUMBER',
+  /** Через расположение и два процентиля */
+  LocationTwoPercentiles = 'LOCATION_TWO_PERCENTILES',
+  /** Через расположение и два процентиля (P50 и P10) */
+  LocationTwoPercentilesP50P10 = 'LOCATION_TWO_PERCENTILES_P50_P10',
+  /** Через расположение и два процентиля (P90 и P10) */
+  LocationTwoPercentilesP90P10 = 'LOCATION_TWO_PERCENTILES_P90_P10',
+  /** Через расположение и два процентиля (P90 и P50) */
+  LocationTwoPercentilesP90P50 = 'LOCATION_TWO_PERCENTILES_P90_P50',
+  /** Через логарифмическое среднее и два процентиля */
+  LogmeanTwoPercentiles = 'LOGMEAN_TWO_PERCENTILES',
+  /** Через логарифмическое среднее и два процентиля (P90 и P10) */
+  LogmeanTwoPercentilesP90P10 = 'LOGMEAN_TWO_PERCENTILES_P90_P10',
+  /** Через среднее (дискретное) и один процентиль */
+  MeanDiscreteOnePercentile = 'MEAN_DISCRETE_ONE_PERCENTILE',
+  /** Через среднее (дискретное) и один процентиль P90 */
+  MeanDiscreteOnePercentileP90 = 'MEAN_DISCRETE_ONE_PERCENTILE_P90',
+  /** Через среднее (дискретное) и один процентиль P95 */
+  MeanDiscreteOnePercentileP95 = 'MEAN_DISCRETE_ONE_PERCENTILE_P95',
+  /** Через среднее и один процентиль */
+  MeanOnePercentile = 'MEAN_ONE_PERCENTILE',
+  /** Через среднее и один процентиль P10 */
+  MeanOnePercentileP10 = 'MEAN_ONE_PERCENTILE_P10',
+  /** Через среднее и один процентиль P90 */
+  MeanOnePercentileP90 = 'MEAN_ONE_PERCENTILE_P90',
   /** Через среднее и стандартное отклонение */
   MeanSd = 'MEAN_SD',
   /** Через среднее и стандартное отклонение (дискретные распределения) */
@@ -990,16 +815,28 @@ export enum DistributionDefinitionTypes {
   MinMax = 'MIN_MAX',
   /** Через минимум и максимум (дискретное) */
   MinMaxInt = 'MIN_MAX_INT',
-  /** Через расположение, логарифмическое среднее и логарифмическое стандартное отклонение */
-  LocationLogmeanLogsd = 'LOCATION_LOGMEAN_LOGSD',
-  /** Через расположение, геометрическое среднее и геометрическое стандартное отклонение */
-  LocationGeommeanGeomsd = 'LOCATION_GEOMMEAN_GEOMSD',
-  /** Через расположение, арифметическое среднее и арифметическое стандартное отклонение */
-  LocationArmeanArsd = 'LOCATION_ARMEAN_ARSD',
+  /** Через минимум, максимум и два процентиля */
+  MinMaxTwoPercentiles = 'MIN_MAX_TWO_PERCENTILES',
+  /** Через минимум, максимум и два процентиля (P75 и P25) */
+  MinMaxTwoPercentilesP75P25 = 'MIN_MAX_TWO_PERCENTILES_P75_P25',
+  /** Через минимум, максимум и два процентиля (P90 и P10) */
+  MinMaxTwoPercentilesP90P10 = 'MIN_MAX_TWO_PERCENTILES_P90_P10',
   /** Через наиболее вероятное, минимум и максимум */
   ModeMinMax = 'MODE_MIN_MAX',
-  /** Через альфа, бета, минимум и максимум */
-  AlphaBetaMinMax = 'ALPHA_BETA_MIN_MAX',
+  /** Через наиболее вероятное и два процентиля */
+  ModeTwoPercentiles = 'MODE_TWO_PERCENTILES',
+  /** Через наиболее вероятное и два процентиля (P90 и P10) */
+  ModeTwoPercentilesP90P10 = 'MODE_TWO_PERCENTILES_P90_P10',
+  /** Вероятность успеха */
+  Probability = 'PROBABILITY',
+  /** Через количество испытаний и вероятность */
+  ProbabilityTrial = 'PROBABILITY_TRIAL',
+  /** Через выборку */
+  Sample = 'SAMPLE',
+  /** Через три процентиля */
+  ThreePercentiles = 'THREE_PERCENTILES',
+  /** Через три процентиля (P90, P50 и P10) */
+  ThreePercentilesP90P50P10 = 'THREE_PERCENTILES_P90_P50_P10',
   /** Через два процентиля */
   TwoPercentiles = 'TWO_PERCENTILES',
   /** Через два процентиля (P90 и P10) */
@@ -1008,95 +845,27 @@ export enum DistributionDefinitionTypes {
   TwoPercentilesP95P5 = 'TWO_PERCENTILES_P95_P5',
   /** Через два процентиля (P99 и P1) */
   TwoPercentilesP99P1 = 'TWO_PERCENTILES_P99_P1',
-  /** Через три процентиля */
-  ThreePercentiles = 'THREE_PERCENTILES',
-  /** Через три процентиля (P90, P50 и P10) */
-  ThreePercentilesP90P50P10 = 'THREE_PERCENTILES_P90_P50_P10',
-  /** Через четыре процентиля */
-  FourPercentiles = 'FOUR_PERCENTILES',
-  /** Через четыре процентиля (P90, P75, P25 и P10) */
-  FourPercentilesP90P75P25P10 = 'FOUR_PERCENTILES_P90_P75_P25_P10',
-  /** Через четыре процентиля (P95, P90, P10 и P5) */
-  FourPercentilesP95P90P10P5 = 'FOUR_PERCENTILES_P95_P90_P10_P5',
-  /** Через среднее и один процентиль */
-  MeanOnePercentile = 'MEAN_ONE_PERCENTILE',
-  /** Через среднее и один процентиль P10 */
-  MeanOnePercentileP10 = 'MEAN_ONE_PERCENTILE_P10',
-  /** Через среднее и один процентиль P90 */
-  MeanOnePercentileP90 = 'MEAN_ONE_PERCENTILE_P90',
-  /** Через среднее (дискретное) и один процентиль */
-  MeanDiscreteOnePercentile = 'MEAN_DISCRETE_ONE_PERCENTILE',
-  /** Через среднее (дискретное) и один процентиль P90 */
-  MeanDiscreteOnePercentileP90 = 'MEAN_DISCRETE_ONE_PERCENTILE_P90',
-  /** Через среднее (дискретное) и один процентиль P95 */
-  MeanDiscreteOnePercentileP95 = 'MEAN_DISCRETE_ONE_PERCENTILE_P95',
-  /** Через расположение и два процентиля */
-  LocationTwoPercentiles = 'LOCATION_TWO_PERCENTILES',
-  /** Через расположение и два процентиля (P90 и P10) */
-  LocationTwoPercentilesP90P10 = 'LOCATION_TWO_PERCENTILES_P90_P10',
-  /** Через расположение и два процентиля (P90 и P50) */
-  LocationTwoPercentilesP90P50 = 'LOCATION_TWO_PERCENTILES_P90_P50',
-  /** Через расположение, арифметическое среднее и один процентиль */
-  LocationArmeanOnePercentile = 'LOCATION_ARMEAN_ONE_PERCENTILE',
-  /** Через расположение, арифметическое среднее и один процентиль P10 */
-  LocationArmeanOnePercentileP10 = 'LOCATION_ARMEAN_ONE_PERCENTILE_P10',
-  /** Через расположение, арифметическое среднее и один процентиль P90 */
-  LocationArmeanOnePercentileP90 = 'LOCATION_ARMEAN_ONE_PERCENTILE_P90',
-  /** Через логарифмическое среднее и два процентиля */
-  ArmeanTwoPercentiles = 'ARMEAN_TWO_PERCENTILES',
-  /** Через логарифмическое среднее и два процентиля (P90 и P10) */
-  ArmeanTwoPercentilesP90P10 = 'ARMEAN_TWO_PERCENTILES_P90_P10',
-  /** Через расположение, логарифмическое среднее и один процентиль */
-  LocationLogmeanOnePercentile = 'LOCATION_LOGMEAN_ONE_PERCENTILE',
-  /** Через расположение, логарифмическое среднее и один процентиль P10 */
-  LocationLogmeanOnePercentileP10 = 'LOCATION_LOGMEAN_ONE_PERCENTILE_P10',
-  /** Через расположение, логарифмическое среднее и один процентиль P90 */
-  LocationLogmeanOnePercentileP90 = 'LOCATION_LOGMEAN_ONE_PERCENTILE_P90',
-  /** Через логарифмическое среднее и два процентиля */
-  LogmeanTwoPercentiles = 'LOGMEAN_TWO_PERCENTILES',
-  /** Через логарифмическое среднее и два процентиля (P90 и P10) */
-  LogmeanTwoPercentilesP90P10 = 'LOGMEAN_TWO_PERCENTILES_P90_P10',
-  /** Через наиболее вероятное и два процентиля */
-  ModeTwoPercentiles = 'MODE_TWO_PERCENTILES',
-  /** Через наиболее вероятное и два процентиля (P90 и P10) */
-  ModeTwoPercentilesP90P10 = 'MODE_TWO_PERCENTILES_P90_P10',
-  /** Через минимум, максимум и два процентиля */
-  MinMaxTwoPercentiles = 'MIN_MAX_TWO_PERCENTILES',
-  /** Через минимум, максимум и два процентиля (P90 и P10) */
-  MinMaxTwoPercentilesP90P10 = 'MIN_MAX_TWO_PERCENTILES_P90_P10',
-  /** Через минимум, максимум и два процентиля (P75 и P25) */
-  MinMaxTwoPercentilesP75P25 = 'MIN_MAX_TWO_PERCENTILES_P75_P25',
-  /** Константа */
-  Constant = 'CONSTANT',
-  /** Вероятность успеха */
-  Probability = 'PROBABILITY',
-  /** Через количество испытаний и вероятность */
-  ProbabilityTrial = 'PROBABILITY_TRIAL',
-  /** Через количество вариантов и сдвиг */
-  LocationNumber = 'LOCATION_NUMBER',
-  /** Через выборку */
-  Sample = 'SAMPLE',
 }
 
 /** Параметры распределения. */
 export type DistributionInput = {
-  /** Тип распределения */
-  type: DistributionTypes;
   /** Способ задания распределения */
   definition: DistributionDefinitionTypes;
-  /** Параметры распределения */
-  parameters: Array<Maybe<DistributionParameterInput>>;
-  /** Нижняя граница усечения */
-  minBound?: Maybe<Scalars['Float']>;
   /** Верхняя граница усечения */
-  maxBound?: Maybe<Scalars['Float']>;
+  maxBound?: InputMaybe<Scalars['Float']>;
+  /** Нижняя граница усечения */
+  minBound?: InputMaybe<Scalars['Float']>;
+  /** Параметры распределения */
+  parameters: Array<InputMaybe<DistributionParameterInput>>;
   /** Выборка случайной величины */
-  sample?: Maybe<Array<Maybe<Scalars['Float']>>>;
+  sample?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
   /** ID файла-источника */
-  sourceVid?: Maybe<Scalars['UUID']>;
+  sourceVid?: InputMaybe<Scalars['UUID']>;
+  /** Тип распределения */
+  type: DistributionTypes;
 };
 
-export type DistributionOrError = Distribution | DetailError;
+export type DistributionOrError = DetailError | Distribution;
 
 /** Параметр способа задания распределения. */
 export type DistributionParameter = {
@@ -1115,146 +884,200 @@ export type DistributionParameterInput = {
 
 /** Тип параметра задания распределения. */
 export enum DistributionParameterTypes {
-  /** Среднее */
-  Mean = 'MEAN',
-  /** Среднее (кратное 0.5) */
-  MeanDiscrete = 'MEAN_DISCRETE',
-  /** Стандартное отклонение */
-  Sd = 'SD',
-  /** Минимум */
-  Min = 'MIN',
-  /** Максимум */
-  Max = 'MAX',
-  /** Минимум (целое) */
-  MinInt = 'MIN_INT',
-  /** Максимум (целое) */
-  MaxInt = 'MAX_INT',
-  /** Расположение */
-  Location = 'LOCATION',
-  /** Расположение (целое) */
-  LocationInt = 'LOCATION_INT',
-  /** Наиболее вероятное */
-  Mode = 'MODE',
-  /** Логарифмическое среднее */
-  Logmean = 'LOGMEAN',
-  /** Логарифмическое стандартное отклонение */
-  Logsd = 'LOGSD',
-  /** Геометрическое среднее */
-  Geommean = 'GEOMMEAN',
-  /** Геометрическое стандартное отклонение */
-  Geomsd = 'GEOMSD',
+  /** Параметр расположения Альфа */
+  Alpha = 'ALPHA',
   /** Арифметическое среднее */
   Armean = 'ARMEAN',
   /** Арифметическое стандартное отклонение */
   Arsd = 'ARSD',
-  /** Параметр расположения Альфа */
-  Alpha = 'ALPHA',
   /** Параметр расположения Бэта */
   Beta = 'BETA',
-  /** Первый квантильный ранг */
-  Q1Rank = 'Q1_RANK',
-  /** Второй квантильный ранг */
-  Q2Rank = 'Q2_RANK',
-  /** Третий квантильный ранг */
-  Q3Rank = 'Q3_RANK',
-  /** Четвертый квантильный ранг */
-  Q4Rank = 'Q4_RANK',
-  /** Значение первого квантиля */
-  Q1Value = 'Q1_VALUE',
-  /** Значение второго квантиля */
-  Q2Value = 'Q2_VALUE',
-  /** Значение третьего квантиля */
-  Q3Value = 'Q3_VALUE',
-  /** Значение четвертого квантиля */
-  Q4Value = 'Q4_VALUE',
   /** Константа */
   Constant = 'CONSTANT',
-  /** Вероятность */
-  Probability = 'PROBABILITY',
-  /** Испытания */
-  Trial = 'TRIAL',
+  /** Геометрическое среднее */
+  Geommean = 'GEOMMEAN',
+  /** Геометрическое стандартное отклонение */
+  Geomsd = 'GEOMSD',
+  /** Расположение */
+  Location = 'LOCATION',
+  /** Расположение (целое) */
+  LocationInt = 'LOCATION_INT',
+  /** Логарифмическое среднее */
+  Logmean = 'LOGMEAN',
+  /** Логарифмическое стандартное отклонение */
+  Logsd = 'LOGSD',
+  /** Максимум */
+  Max = 'MAX',
+  /** Максимум (целое) */
+  MaxInt = 'MAX_INT',
+  /** Среднее */
+  Mean = 'MEAN',
+  /** Среднее (кратное 0.5) */
+  MeanDiscrete = 'MEAN_DISCRETE',
+  /** Минимум */
+  Min = 'MIN',
+  /** Минимум (целое) */
+  MinInt = 'MIN_INT',
+  /** Наиболее вероятное */
+  Mode = 'MODE',
   /** Количество вариантов */
   Number = 'NUMBER',
+  /** Вероятность */
+  Probability = 'PROBABILITY',
+  /** Первый квантильный ранг */
+  Q1Rank = 'Q1_RANK',
+  /** Значение первого квантиля */
+  Q1Value = 'Q1_VALUE',
+  /** Второй квантильный ранг */
+  Q2Rank = 'Q2_RANK',
+  /** Значение второго квантиля */
+  Q2Value = 'Q2_VALUE',
+  /** Третий квантильный ранг */
+  Q3Rank = 'Q3_RANK',
+  /** Значение третьего квантиля */
+  Q3Value = 'Q3_VALUE',
+  /** Четвертый квантильный ранг */
+  Q4Rank = 'Q4_RANK',
+  /** Значение четвертого квантиля */
+  Q4Value = 'Q4_VALUE',
+  /** Стандартное отклонение */
+  Sd = 'SD',
+  /** Испытания */
+  Trial = 'TRIAL',
 }
 
 /** Пространство имен для работы с распределениями. */
 export type DistributionQueries = {
   __typename?: 'DistributionQueries';
-  /** Результат вычисления значения распределения */
-  distributionChart?: Maybe<DistributionChartResult>;
   /** Результат поиска альтернативных способов задания распределения */
   alternativeDefinitions?: Maybe<AlternativeDefinitionResult>;
-};
-
-/** Пространство имен для работы с распределениями. */
-export type DistributionQueriesDistributionChartArgs = {
-  distribution: DistributionInput;
-  visibleRank?: Maybe<Scalars['Int']>;
+  /** Результат вычисления значения распределения */
+  distributionChart?: Maybe<DistributionChartResult>;
 };
 
 /** Пространство имен для работы с распределениями. */
 export type DistributionQueriesAlternativeDefinitionsArgs = {
+  code?: InputMaybe<Scalars['String']>;
   distribution: DistributionInput;
 };
 
+/** Пространство имен для работы с распределениями. */
+export type DistributionQueriesDistributionChartArgs = {
+  code?: InputMaybe<Scalars['String']>;
+  distribution: DistributionInput;
+  visibleRank?: InputMaybe<Scalars['Int']>;
+};
+
+export type DistributionSetResult = {
+  __typename?: 'DistributionSetResult';
+  /** Альтернативные способы задания */
+  alternatives?: Maybe<Array<Maybe<Distribution>>>;
+  chart?: Maybe<DistributionChartUnion>;
+  /** Отображаемое значение */
+  visibleValue?: Maybe<Scalars['Float']>;
+};
+
+/** Результат задания параметра. */
+export type DistributionSetResultOrError =
+  | CommonErrors
+  | DetailErrors
+  | DistributionDefinitionErrors
+  | DistributionSetResult
+  | Error;
+
 /** Типы распределений. */
 export enum DistributionTypes {
-  /** Нормальное распределение */
-  Normal = 'NORMAL',
+  /** Распределение Бернулли */
+  Bernoulli = 'BERNOULLI',
+  /** Бета распределение */
+  Beta = 'BETA',
+  /** Биномиальное распределение */
+  Binomial = 'BINOMIAL',
+  /** Константа */
+  Constant = 'CONSTANT',
+  /** Подбор распределение по выборке */
+  CustomDataSelection = 'CUSTOM_DATA_SELECTION',
+  /** Пользовательское распределение по выборке */
+  CustomSample = 'CUSTOM_SAMPLE',
   /** Логнормальное распределение */
   Lognormal = 'LOGNORMAL',
+  /** Нормальное распределение */
+  Normal = 'NORMAL',
+  /** ПЕРТ распределение */
+  Pert = 'PERT',
   /** Треугольное распределение */
   Triangular = 'TRIANGULAR',
   /** Равномерное распределение */
   Uniform = 'UNIFORM',
-  /** Бета распределение */
-  Beta = 'BETA',
-  /** ПЕРТ распределение */
-  Pert = 'PERT',
-  /** Константа */
-  Constant = 'CONSTANT',
-  /** Распределение Бернулли */
-  Bernoulli = 'BERNOULLI',
-  /** Биномиальное распределение */
-  Binomial = 'BINOMIAL',
   /** Дискретное равномерное распределение */
   UniformDiscrete = 'UNIFORM_DISCRETE',
-  /** Пользовательское распределение по выборке */
-  CustomSample = 'CUSTOM_SAMPLE',
 }
-
-export type DnsProfileYearValueType = {
-  __typename?: 'DnsProfileYearValueType';
-  year?: Maybe<Scalars['Int']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type DnsType = {
-  __typename?: 'DnsType';
-  commonChapter?: Maybe<CommonChapterType>;
-  ndpiOilChapter?: Maybe<NdpiOilChapterType>;
-  ndpiGasChapter?: Maybe<NdpiGasChapterType>;
-};
 
 export type DomainEntity = {
   __typename?: 'DomainEntity';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type DomainEntityImage = {
   __typename?: 'DomainEntityImage';
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  entity?: Maybe<DomainEntity>;
   attributes?: Maybe<Array<Maybe<PropertyMeta>>>;
+  code?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  entity?: Maybe<DomainEntity>;
+  name?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
+};
+
+export type DomainEntityL = {
+  __typename?: 'DomainEntityL';
+  code: Scalars['String'];
+  name: Scalars['String'];
+};
+
+/** Мутации доменных сущностей. */
+export type DomainEntityMutations = {
+  __typename?: 'DomainEntityMutations';
+  create?: Maybe<RbDomainEntityListOrError>;
+  delete?: Maybe<RbDomainEntityListOrError>;
+  move?: Maybe<RbDomainEntityListOrError>;
+  update?: Maybe<RbDomainEntityListOrError>;
+};
+
+/** Мутации доменных сущностей. */
+export type DomainEntityMutationsCreateArgs = {
+  calcVisible: Scalars['Boolean'];
+  icon: RbDomainEntityIcons;
+  name: Scalars['String'];
+  place?: InputMaybe<Scalars['Int']>;
+  tableVisible: Scalars['Boolean'];
+  treeVisible: Scalars['Boolean'];
+};
+
+/** Мутации доменных сущностей. */
+export type DomainEntityMutationsMoveArgs = {
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации доменных сущностей. */
+export type DomainEntityMutationsUpdateArgs = {
+  calcVisible?: InputMaybe<Scalars['Boolean']>;
+  icon?: InputMaybe<RbDomainEntityIcons>;
+  name?: InputMaybe<Scalars['String']>;
+  tableVisible?: InputMaybe<Scalars['Boolean']>;
+  treeVisible?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type DomainEntityResult = {
+  __typename?: 'DomainEntityResult';
+  code: Scalars['String'];
+  name: Scalars['String'];
+  visible: VisibleResult;
 };
 
 export type DomainMutations = {
@@ -1265,73 +1088,90 @@ export type DomainMutations = {
 
 export type DomainObject = {
   __typename?: 'DomainObject';
-  /** Категория геологического объекта */
-  geoObjectCategory: GeoObjectCategories;
-  /** Отображения/Скрытие объекта в таблице */
-  visible: Scalars['Boolean'];
-  /** id строки */
-  vid: Scalars['UUID'];
-  /** Иерархия геологического объекта в структуре проекта */
-  domainObjectPath: Array<DomainObjectPathLevel>;
-  /** Список значений атрибутов геологического объекта */
-  attributeValues: Array<AttributeValue>;
-  /** Список рисков геологического объекта */
-  risksValues: Array<RiskValue>;
   /** Значение GCoS геологического объекта */
   GCoS?: Maybe<Scalars['Float']>;
+  /** Список значений атрибутов геологического объекта */
+  attributeValues: Array<Maybe<AttributeValue>>;
+  /** Иерархия геологического объекта в структуре проекта */
+  domainObjectPath: Array<Maybe<DomainObjectPathLevel>>;
+  /** Категория геологического объекта */
+  geoObjectCategory: GeoObjectCategories;
+  /** Тип геологического объекта */
+  geoObjectFluidType: GeoObjectFluidType;
+  /** Список рисков геологического объекта */
+  risksValues: Array<Maybe<RiskValue>>;
+  /** Список вероятностей насыщения */
+  saturationProbabilities: Array<SaturationProbabilities>;
+  /** id строки */
+  vid: Scalars['UUID'];
+  /** Отображения/Скрытие объекта в таблице */
+  visible: Scalars['Boolean'];
 };
 
 export type DomainObjectGroupMutations = {
   __typename?: 'DomainObjectGroupMutations';
   create?: Maybe<CreateDomainGroupResult>;
-  update?: Maybe<UpdateDomainGroupResult>;
   delete?: Maybe<DeleteDomainGroupResult>;
+  update?: Maybe<UpdateDomainGroupResult>;
 };
 
 export type DomainObjectGroupMutationsCreateArgs = {
-  formula?: Maybe<Scalars['String']>;
+  formula?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
-  vids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-};
-
-export type DomainObjectGroupMutationsUpdateArgs = {
-  formula?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  vid: Scalars['UUID'];
-  vids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
+  vids?: InputMaybe<Array<InputMaybe<Scalars['UUID']>>>;
 };
 
 export type DomainObjectGroupMutationsDeleteArgs = {
   vid: Scalars['UUID'];
 };
 
+export type DomainObjectGroupMutationsUpdateArgs = {
+  formula?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  vid: Scalars['UUID'];
+  vids?: InputMaybe<Array<InputMaybe<Scalars['UUID']>>>;
+};
+
 export type DomainObjectGroupType = {
   __typename?: 'DomainObjectGroupType';
-  vid?: Maybe<Scalars['UUID']>;
+  formula?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   objects?: Maybe<Array<Maybe<DomainObjectInterface>>>;
-  formula?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['UUID']>;
 };
 
 export type DomainObjectInput = {
-  /** Категория геологического объекта */
-  geoObjectCategory: GeoObjectCategories;
-  /** Отображения/Скрытие объекта в таблице */
-  visible: Scalars['Boolean'];
-  /** id строки */
-  vid: Scalars['UUID'];
-  /** Иерархия геологического объекта в структуре проекта */
-  domainObjectPath: Array<DomainObjectPathLevelInput>;
   /** Список значений атрибутов геологического объекта */
   attributeValues: Array<AttributeValueInput>;
+  /** Иерархия геологического объекта в структуре проекта */
+  domainObjectPath: Array<DomainObjectPathLevelInput>;
+  /** Категория геологического объекта */
+  geoObjectCategory: GeoObjectCategories;
+  /** Тип геологического объекта */
+  geoObjectFluidType: GeoObjectFluidType;
   /** Список рисков геологического объекта */
   risksValues: Array<RiskValueInput>;
+  /** Список вероятностей насыщения */
+  saturationProbabilities: Array<InputMaybe<SaturationProbabilitiesInput>>;
+  /** id строки */
+  vid: Scalars['UUID'];
+  /** Отображения/Скрытие объекта в таблице */
+  visible: Scalars['Boolean'];
 };
 
 /** Интерфейс доменного объекта. */
 export type DomainObjectInterface = {
-  vid?: Maybe<Scalars['UUID']>;
   name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['UUID']>;
+};
+
+export type DomainObjectL = {
+  __typename?: 'DomainObjectL';
+  developmentScenarios: Array<Maybe<DevelopmentScenarioVariantL>>;
+  domainObjectPath: Array<Maybe<DomainObjectPathL>>;
+  geologicalScenarios: Array<Maybe<GeoLogicalScenarioVariantL>>;
+  id: Scalars['UUID'];
+  thicknessHistograms: Array<Maybe<ThicknessHistogramVariantL>>;
 };
 
 export type DomainObjectMutations = {
@@ -1340,7 +1180,20 @@ export type DomainObjectMutations = {
 };
 
 export type DomainObjectMutationsDeleteArgs = {
-  vid?: Maybe<Scalars['UUID']>;
+  vid?: InputMaybe<Scalars['UUID']>;
+};
+
+/** Результат создания/перемещения доменного объекта. */
+export type DomainObjectOrError =
+  | DetailErrors
+  | DomainObjectWithPosition
+  | Error
+  | ValidationError;
+
+export type DomainObjectPathL = {
+  __typename?: 'DomainObjectPathL';
+  code: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type DomainObjectPathLevel = {
@@ -1355,7 +1208,7 @@ export type DomainObjectPathLevelInput = {
   /** Кодовое обозначение уровня иерархии геологического объекта */
   code: Scalars['String'];
   /** Название уровня иерархии геологического объекта */
-  value?: Maybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type DomainObjectQuery = {
@@ -1366,13 +1219,40 @@ export type DomainObjectQuery = {
 };
 
 export type DomainObjectQueryDomainObjectArgs = {
-  vid?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  vid?: InputMaybe<Scalars['UUID']>;
 };
 
 export type DomainObjectQueryObjectGroupArgs = {
-  vid?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  vid?: InputMaybe<Scalars['UUID']>;
+};
+
+export type DomainObjectResult = {
+  __typename?: 'DomainObjectResult';
+  attributeValues: Array<AttributeValueResult>;
+  geoFluidTypes: Array<Maybe<Scalars['String']>>;
+  parents: Array<Parent>;
+};
+
+/** Доменный объект с индексом положения в таблице. */
+export type DomainObjectWithPosition = {
+  __typename?: 'DomainObjectWithPosition';
+  object: DomainObject;
+  position?: Maybe<Scalars['Int']>;
+};
+
+/** Should contain all codes from DOMAIN_SCENARIOS. */
+export enum DomainScenarioEnum {
+  DevScenarios = 'DEV_SCENARIOS',
+  GeoScenarios = 'GEO_SCENARIOS',
+  ThicknessHist = 'THICKNESS_HIST',
+}
+
+export type DomainScenarioL = {
+  __typename?: 'DomainScenarioL';
+  code: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type DomainSchema = {
@@ -1386,71 +1266,75 @@ export type Error = ErrorInterface & {
   __typename?: 'Error';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: ErrorCodesEnum;
+  details?: Maybe<Scalars['String']>;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
-  details?: Maybe<Scalars['String']>;
   payload?: Maybe<Scalars['DictType']>;
 };
 
 /** Error codes list. */
 export enum ErrorCodesEnum {
-  /** Проект не найден */
-  ProjectNotFound = 'PROJECT_NOT_FOUND',
-  /** Ошибка при обновлении проекта */
-  ProjectUpdateError = 'PROJECT_UPDATE_ERROR',
-  /** Объект справочника не найден */
-  ReferenceItemNotFound = 'REFERENCE_ITEM_NOT_FOUND',
+  /** Проект нельзя возвращать в статус заготовки. */
+  CannotBringBlankBack = 'CANNOT_BRING_BLANK_BACK',
+  /** Отсутствует роль */
+  EmptyAttendeeRole = 'EMPTY_ATTENDEE_ROLE',
   /** Ошибка */
   Error = 'ERROR',
   /** Некорректная версия проекта */
   IncorrectProjectVersion = 'INCORRECT_PROJECT_VERSION',
-  /** Расхождение версий проекта */
-  ProjectVersionDiffError = 'PROJECT_VERSION_DIFF_ERROR',
-  /** Проект с таким именем уже существует */
-  ProjectNameAlreadyExists = 'PROJECT_NAME_ALREADY_EXISTS',
+  /** Некорректный формат UUID */
+  IncorrectUuid = 'INCORRECT_UUID',
+  /** Неверная структура импортируемого файла */
+  InvalidImportFileStructure = 'INVALID_IMPORT_FILE_STRUCTURE',
+  /** Неверный номер страницы */
+  InvalidPageNumber = 'INVALID_PAGE_NUMBER',
+  /** Неверный размер страницы */
+  InvalidPageSize = 'INVALID_PAGE_SIZE',
+  /** Имя уже используется в концепциях */
+  NonUniqueName = 'NON_UNIQUE_NAME',
+  /** Удаляемый участник не найден в проекте  */
+  NoAttendeeToRemove = 'NO_ATTENDEE_TO_REMOVE',
   /** Пользователь не обладает правами для совершения операции */
   NoRights = 'NO_RIGHTS',
   /** Объект не найден */
   ObjectNotFound = 'OBJECT_NOT_FOUND',
-  /** Отсутствует роль */
-  EmptyAttendeeRole = 'EMPTY_ATTENDEE_ROLE',
-  /** Удаляемый участник не найден в проекте  */
-  NoAttendeeToRemove = 'NO_ATTENDEE_TO_REMOVE',
-  /** Некорректный формат UUID */
-  IncorrectUuid = 'INCORRECT_UUID',
-  /** Участник проекта не найден */
-  ProjectAttendeeNotFound = 'PROJECT_ATTENDEE_NOT_FOUND',
   /** Участник проекта уже обладет данной ролью */
   ProjectAttendeeAlreadyHasRole = 'PROJECT_ATTENDEE_ALREADY_HAS_ROLE',
+  /** Участник проекта не найден */
+  ProjectAttendeeNotFound = 'PROJECT_ATTENDEE_NOT_FOUND',
   /** Рольу участника проекта не найдена */
   ProjectAttendeeUserRoleNotFound = 'PROJECT_ATTENDEE_USER_ROLE_NOT_FOUND',
   /** Невозможно добавить участника с дублирующимися ролями. */
   ProjectAttendeeUserWithDuplicateRoles = 'PROJECT_ATTENDEE_USER_WITH_DUPLICATE_ROLES',
   /** Невозможно сохранить проект - не найден менеджер проекта */
   ProjectManagerNotFound = 'PROJECT_MANAGER_NOT_FOUND',
-  /** Проект нельзя возвращать в статус заготовки. */
-  CannotBringBlankBack = 'CANNOT_BRING_BLANK_BACK',
-  /** Неверный номер страницы */
-  InvalidPageNumber = 'INVALID_PAGE_NUMBER',
-  /** Ошибка валидации */
-  Validation = 'VALIDATION',
-  /** Неверный размер страницы */
-  InvalidPageSize = 'INVALID_PAGE_SIZE',
+  /** Проект с таким именем уже существует */
+  ProjectNameAlreadyExists = 'PROJECT_NAME_ALREADY_EXISTS',
+  /** Проект не найден */
+  ProjectNotFound = 'PROJECT_NOT_FOUND',
+  /** Проект был обновлён */
+  ProjectUpdatedError = 'PROJECT_UPDATED_ERROR',
+  /** Ошибка при обновлении проекта */
+  ProjectUpdateError = 'PROJECT_UPDATE_ERROR',
+  /** Расхождение версий проекта */
+  ProjectVersionDiffError = 'PROJECT_VERSION_DIFF_ERROR',
+  /** Объект справочника не найден */
+  ReferenceItemNotFound = 'REFERENCE_ITEM_NOT_FOUND',
   /** Неправильно сформированный запрос */
   RequestError = 'REQUEST_ERROR',
+  /** Ошибка валидации */
+  Validation = 'VALIDATION',
   /** Неверное расширение файла */
   WrongFileExtension = 'WRONG_FILE_EXTENSION',
-  /** Неверная структура импортируемого файла */
-  InvalidImportFileStructure = 'INVALID_IMPORT_FILE_STRUCTURE',
 }
 
 /** Интерфейс ошибок, отображаемых пользователю. */
 export type ErrorInterface = {
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: ErrorCodesEnum;
+  details?: Maybe<Scalars['String']>;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
-  details?: Maybe<Scalars['String']>;
   payload?: Maybe<Scalars['DictType']>;
 };
 
@@ -1461,10 +1345,12 @@ export type GCoSCalculationResult = {
   errors?: Maybe<Array<TableError>>;
 };
 
-export type GeoCategory = {
-  __typename?: 'GeoCategory';
-  code: Scalars['String'];
-  shortName: Scalars['String'];
+export type GeoLogicalScenarioVariantL = {
+  __typename?: 'GeoLogicalScenarioVariantL';
+  headers: Array<Maybe<HeaderL>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  scenarios: Array<Maybe<GeologicalScenarioL>>;
 };
 
 /** Список категорий геологического объекта. */
@@ -1473,567 +1359,162 @@ export enum GeoObjectCategories {
   Resources = 'RESOURCES',
 }
 
-export type GeoType = {
-  __typename?: 'GeoType';
+/** Список типов геологических объектов(флюидов). */
+export enum GeoObjectFluidType {
+  Gas = 'GAS',
+  Mixture = 'MIXTURE',
+  Oil = 'OIL',
+}
+
+export type GeologicalScenarioL = {
+  __typename?: 'GeologicalScenarioL';
+  cells: Array<Maybe<CellL>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+};
+
+export type Header = {
+  __typename?: 'Header';
+  children: Array<Maybe<Child>>;
   code: Scalars['String'];
-  shortName: Scalars['String'];
+  decimal: Scalars['Int'];
+  name: Scalars['String'];
 };
 
-/** An enumeration. */
-export enum IncomeTaxBase {
-  WithoutTransition = 'WITHOUT_TRANSITION',
-  WithTransition = 'WITH_TRANSITION',
-}
-
-/** Модель логики проекта - хранение внутри сущности проекта. */
-export type Logic = {
-  __typename?: 'Logic';
-  canvas?: Maybe<Array<Maybe<CanvasNode>>>;
-  stepList?: Maybe<Array<Maybe<ScenarioStep>>>;
+export type HeaderL = {
+  __typename?: 'HeaderL';
+  children: Array<Maybe<ChildL>>;
+  code: Scalars['String'];
+  decimal: Scalars['Int'];
+  name: Scalars['String'];
 };
 
-export type LogicMutations = {
-  __typename?: 'LogicMutations';
-  scenarioStep?: Maybe<ScenarioStepMutations>;
-  canvas?: Maybe<CanvasMutations>;
+export type HistogramReservesStatistics = {
+  __typename?: 'HistogramReservesStatistics';
+  decimal: Scalars['Int'];
+  mathStats: Array<MathStat>;
+  percentiles: Array<PercentileOutput>;
+  title: Scalars['String'];
 };
 
-export type Macroparameter = {
-  __typename?: 'Macroparameter';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Array<Maybe<MacroparameterYearValueType>>>;
-  yearValue?: Maybe<YearValueOrError>;
-  createdAt?: Maybe<Scalars['DateTime']>;
+export type HistogramResult = {
+  __typename?: 'HistogramResult';
+  cdf: Array<CdfPoint>;
+  numberOfIterationBin: Array<Scalars['Float']>;
+  percentiles: Array<PercentilePoint>;
+  sample: Array<Scalars['Float']>;
+  subtitle: Scalars['String'];
+  title: Scalars['String'];
 };
 
-export type MacroparameterYearValueArgs = {
-  year?: Maybe<Scalars['Int']>;
+export type HistogramResultQuery = {
+  __typename?: 'HistogramResultQuery';
+  getHistogramReservesStatistics?: Maybe<HistogramsReservesStatistics>;
+  getHistograms?: Maybe<HistogramsResult>;
+  getSensitivityAnalysis?: Maybe<Array<Maybe<SensitivityAnalysis>>>;
+  getSensitivityAnalysisStatistics?: Maybe<
+    Array<Maybe<SensitivityAnalysisStatistics>>
+  >;
 };
 
-export type MacroparameterGroup = {
-  __typename?: 'MacroparameterGroup';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  macroparameter?: Maybe<MacroparameterOrError>;
-  macroparameterList?: Maybe<MacroparameterListOrError>;
-  createdAt?: Maybe<Scalars['DateTime']>;
+export type HistogramResultQueryGetHistogramReservesStatisticsArgs = {
+  bins?: InputMaybe<Scalars['Int']>;
+  domainEntityNames?: InputMaybe<Array<Scalars['String']>>;
 };
 
-export type MacroparameterGroupMacroparameterArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
+export type HistogramResultQueryGetHistogramsArgs = {
+  bins?: InputMaybe<Scalars['Int']>;
+  domainEntityNames?: InputMaybe<Array<Scalars['String']>>;
 };
 
-export type MacroparameterGroupMacroparameterListArgs = {
-  id?: Maybe<Scalars['String']>;
+export type HistogramResultQueryGetSensitivityAnalysisArgs = {
+  domainEntityNames?: InputMaybe<Array<Scalars['String']>>;
 };
 
-export type MacroparameterGroupList = {
-  __typename?: 'MacroparameterGroupList';
-  macroparameterGroupList?: Maybe<Array<Maybe<MacroparameterGroup>>>;
+export type HistogramResultQueryGetSensitivityAnalysisStatisticsArgs = {
+  domainEntityNames?: InputMaybe<Array<Scalars['String']>>;
 };
 
-export type MacroparameterGroupListOrError = MacroparameterGroupList | Error;
-
-export type MacroparameterGroupOrDiffOrError = MacroparameterGroup | Error;
-
-export type MacroparameterGroupOrError = MacroparameterGroup | Error;
-
-export type MacroparameterList = {
-  __typename?: 'MacroparameterList';
-  macroparameterList?: Maybe<Array<Maybe<Macroparameter>>>;
+export type HistogramsReservesStatistics = {
+  __typename?: 'HistogramsReservesStatistics';
+  statistics: Array<HistogramReservesStatistics>;
 };
 
-export type MacroparameterListOrError = MacroparameterList | Error;
-
-export type MacroparameterMutation = {
-  __typename?: 'MacroparameterMutation';
-  createMacroparameterSet?: Maybe<CreateMacroparameterSet>;
-  changeMacroparameterSet?: Maybe<ChangeMacroparameterSet>;
-  deleteMacroparameterSet?: Maybe<DeleteMacroparameterSet>;
-  createMacroparameterGroup?: Maybe<CreateMacroparameterGroup>;
-  changeMacroparameterGroup?: Maybe<ChangeMacroparameterGroup>;
-  deleteMacroparameterGroup?: Maybe<DeleteMacroparameterGroup>;
-  createMacroparameter?: Maybe<CreateMacroparameter>;
-  changeMacroparameter?: Maybe<ChangeMacroparameter>;
-  clearMacroparameterValue?: Maybe<ClearMacroparameterValue>;
-  setMacroparameterYearValue?: Maybe<SetMacroparameterYearValue>;
-  deleteMacroparameter?: Maybe<DeleteMacroparameter>;
+export type HistogramsResult = {
+  __typename?: 'HistogramsResult';
+  histograms?: Maybe<Array<HistogramResult>>;
 };
 
-export type MacroparameterMutationCreateMacroparameterSetArgs = {
-  allProjects?: Maybe<Scalars['Boolean']>;
-  caption?: Maybe<Scalars['String']>;
-  category?: Maybe<MacroparameterSetCategory>;
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type MacroparameterMutationChangeMacroparameterSetArgs = {
-  allProjects?: Maybe<Scalars['Boolean']>;
-  caption?: Maybe<Scalars['String']>;
-  category?: Maybe<MacroparameterSetCategory>;
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type MacroparameterMutationDeleteMacroparameterSetArgs = {
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type MacroparameterMutationCreateMacroparameterGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type MacroparameterMutationChangeMacroparameterGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-};
-
-export type MacroparameterMutationDeleteMacroparameterGroupArgs = {
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type MacroparameterMutationCreateMacroparameterArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type MacroparameterMutationChangeMacroparameterArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type MacroparameterMutationClearMacroparameterValueArgs = {
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-};
-
-export type MacroparameterMutationSetMacroparameterYearValueArgs = {
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type MacroparameterMutationDeleteMacroparameterArgs = {
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type MacroparameterOrDiffOrError = Macroparameter | Error;
-
-export type MacroparameterOrError = Macroparameter | Error;
-
-export type MacroparameterSet = {
-  __typename?: 'MacroparameterSet';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-  allProjects?: Maybe<Scalars['Boolean']>;
-  category?: Maybe<MacroparameterSetCategory>;
-  macroparameterGroup?: Maybe<MacroparameterGroupOrError>;
-  macroparameterGroupList?: Maybe<MacroparameterGroupListOrError>;
-};
-
-export type MacroparameterSetMacroparameterGroupArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-/** An enumeration. */
-export enum MacroparameterSetCategory {
-  SetCategoryReal = 'SET_CATEGORY_REAL',
-  SetCategoryNominal = 'SET_CATEGORY_NOMINAL',
-}
-
-export type MacroparameterSetList = {
-  __typename?: 'MacroparameterSetList';
-  macroparameterSetList?: Maybe<Array<Maybe<MacroparameterSet>>>;
-};
-
-export type MacroparameterSetListOrError = MacroparameterSetList | Error;
-
-export type MacroparameterSetOrDiffOrError = MacroparameterSet | Error;
-
-export type MacroparameterSetOrError = MacroparameterSet | Error;
-
-export type MacroparameterYearValueType = {
-  __typename?: 'MacroparameterYearValueType';
-  year?: Maybe<Scalars['Int']>;
-  value?: Maybe<Scalars['Float']>;
+export type MathStat = {
+  __typename?: 'MathStat';
+  name: Scalars['String'];
+  value: Scalars['String'];
 };
 
 /** An enumeration. */
 export enum MethodTypeEnum {
-  MonteCarlo = 'MONTE_CARLO',
-  LatinHypercube = 'LATIN_HYPERCUBE',
   Deterministic = 'DETERMINISTIC',
+  LatinHypercube = 'LATIN_HYPERCUBE',
+  MonteCarlo = 'MONTE_CARLO',
 }
 
 export type Mutation = {
   __typename?: 'Mutation';
+  project?: Maybe<ProjectMutationOrError>;
   /** Актуальная версия текущего проекта */
   version?: Maybe<Scalars['Int']>;
-  project?: Maybe<ProjectMutationOrError>;
 };
 
 export type MutationProjectArgs = {
   version: Scalars['Int'];
 };
 
-export type NddType = {
-  __typename?: 'NddType';
-  uralsQualityPremium?: Maybe<Scalars['Float']>;
-  uralsQualityDiscount?: Maybe<Scalars['Float']>;
-  incomeTaxBase?: Maybe<IncomeTaxBase>;
-  macroparameters?: Maybe<Array<Maybe<Macroparameter>>>;
+export type NoDomainObjectWithSuchIdError = {
+  __typename?: 'NoDomainObjectWithSuchIdError';
+  errorMessage: Scalars['String'];
 };
 
-export type NddTypeMacroparametersArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
+export type NoTeosObjectError = {
+  __typename?: 'NoTeosObjectError';
+  errorMessage: Scalars['String'];
 };
 
-export type NdpiGasChapterType = {
-  __typename?: 'NdpiGasChapterType';
-  macroparameters?: Maybe<Array<Maybe<Macroparameter>>>;
+export type NoVariantWithSuchVid = {
+  __typename?: 'NoVariantWithSuchVid';
+  errorMessage: Scalars['String'];
 };
 
-export type NdpiGasChapterTypeMacroparametersArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type NdpiOilChapterType = {
-  __typename?: 'NdpiOilChapterType';
-  macroparameters?: Maybe<Array<Maybe<Macroparameter>>>;
-  yearStartKkan?: Maybe<Scalars['Int']>;
-  zeroValues?: Maybe<Scalars['Float']>;
-};
-
-export type NdpiOilChapterTypeMacroparametersArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-/** Значение цены реализации относительно года. */
-export type NetbackPriceInput = {
-  /** Название */
-  name: Scalars['String'];
-  /** Цены */
-  prices: Array<Maybe<AverageAnnualPriceInput>>;
-  /** Тип нэтбэка (ДНС или НДД) */
-  netbackType: Scalars['String'];
-};
-
-export type NetbackPriceOrDiffOrError = NetbackPriceType | Error;
-
-export type NetbackPriceType = {
-  __typename?: 'NetbackPriceType';
-  name?: Maybe<Scalars['String']>;
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceType>>>;
-  netbackType?: Maybe<Scalars['String']>;
-  units?: Maybe<Scalars['String']>;
-  value?: Maybe<Array<Maybe<AverageAnnualPriceType>>>;
-};
-
-export type Opex = {
-  __typename?: 'Opex';
-  autoexport?: Maybe<OpexExpenseGroupOrError>;
-  mkos?: Maybe<OpexExpenseGroupOrError>;
-  opexCaseList?: Maybe<OpexExpenseGroupListOrError>;
-  opexCase?: Maybe<OpexExpenseGroupOrError>;
-  hasAutoexport?: Maybe<Scalars['Boolean']>;
-  hasMkos?: Maybe<Scalars['Boolean']>;
-  sdf?: Maybe<Scalars['Boolean']>;
-};
-
-export type OpexOpexCaseArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type OpexExpense = {
-  __typename?: 'OpexExpense';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  value?: Maybe<Array<Maybe<OpexYearValue>>>;
-  valueTotal?: Maybe<Scalars['Float']>;
-  yearValue?: Maybe<YearValueOrError>;
-};
-
-export type OpexExpenseYearValueArgs = {
-  year?: Maybe<Scalars['Int']>;
-};
-
-export type OpexExpenseGroup = {
-  __typename?: 'OpexExpenseGroup';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  opexExpenseList?: Maybe<OpexExpenseListOrError>;
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type OpexExpenseGroupOpexExpenseArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-};
-
-export type OpexExpenseGroupList = {
-  __typename?: 'OpexExpenseGroupList';
-  opexCaseList?: Maybe<Array<Maybe<OpexExpenseGroup>>>;
-};
-
-export type OpexExpenseGroupListOrError = OpexExpenseGroupList | Error;
-
-export type OpexExpenseGroupOrError = OpexExpenseGroup | Error;
-
-export type OpexExpenseList = {
-  __typename?: 'OpexExpenseList';
-  opexExpenseList?: Maybe<Array<Maybe<OpexExpense>>>;
-};
-
-export type OpexExpenseListOrError = OpexExpenseList | Error;
-
-export type OpexExpenseOrError = OpexExpense | Error;
-
-export type OpexMutation = {
-  __typename?: 'OpexMutation';
-  setOpexAutoexport?: Maybe<SetOpexAutoexport>;
-  changeOpexAutoexport?: Maybe<ChangeOpexAutoexport>;
-  removeOpexAutoexport?: Maybe<Error>;
-  createOpexAutoexportExpense?: Maybe<CreateOpexAutoexportExpense>;
-  changeOpexAutoexportExpense?: Maybe<ChangeOpexAutoexportExpense>;
-  deleteOpexAutoexportExpense?: Maybe<DeleteOpexAutoexportExpense>;
-  setOpexAutoexportExpenseYearValue?: Maybe<SetOpexAutoexportExpenseYearValue>;
-  setOpexMkos?: Maybe<SetOpexMkos>;
-  setOpexSdf?: Maybe<SetOpexSdf>;
-  changeOpexMkos?: Maybe<ChangeOpexMkos>;
-  removeOpexMkos?: Maybe<Error>;
-  createOpexMkosExpense?: Maybe<CreateOpexMkosExpense>;
-  changeOpexMkosExpense?: Maybe<ChangeOpexMkosExpense>;
-  deleteOpexMkosExpense?: Maybe<DeleteOpexMkosExpense>;
-  setOpexMkosExpenseYearValue?: Maybe<SetOpexMkosExpenseYearValue>;
-  createOpexCase?: Maybe<CreateOpexCase>;
-  changeOpexCase?: Maybe<ChangeOpexCase>;
-  deleteOpexCase?: Maybe<DeleteOpexCase>;
-  createOpexCaseExpense?: Maybe<CreateOpexCaseExpense>;
-  changeOpexCaseExpense?: Maybe<ChangeOpexCaseExpense>;
-  deleteOpexCaseExpense?: Maybe<DeleteOpexCaseExpense>;
-  setOpexCaseExpenseYearValue?: Maybe<SetOpexCaseExpenseYearValue>;
-};
-
-export type OpexMutationSetOpexAutoexportArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationChangeOpexAutoexportArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationCreateOpexAutoexportExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationChangeOpexAutoexportExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationDeleteOpexAutoexportExpenseArgs = {
-  expenseId: Scalars['ID'];
-};
-
-export type OpexMutationSetOpexAutoexportExpenseYearValueArgs = {
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type OpexMutationSetOpexMkosArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationSetOpexSdfArgs = {
-  sdf?: Maybe<Scalars['Boolean']>;
-};
-
-export type OpexMutationChangeOpexMkosArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationCreateOpexMkosExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationChangeOpexMkosExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationDeleteOpexMkosExpenseArgs = {
-  expenseId: Scalars['ID'];
-};
-
-export type OpexMutationSetOpexMkosExpenseYearValueArgs = {
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type OpexMutationCreateOpexCaseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationChangeOpexCaseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type OpexMutationDeleteOpexCaseArgs = {
-  caseId: Scalars['ID'];
-};
-
-export type OpexMutationCreateOpexCaseExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationChangeOpexCaseExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type OpexMutationDeleteOpexCaseExpenseArgs = {
-  caseId: Scalars['ID'];
-  expenseId: Scalars['ID'];
-};
-
-export type OpexMutationSetOpexCaseExpenseYearValueArgs = {
-  caseId: Scalars['ID'];
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type OpexOrError = Opex | Error;
-
-export type OpexSdf = {
-  __typename?: 'OpexSdf';
-  sdf?: Maybe<Scalars['Boolean']>;
-};
-
-export type OpexSdfOrError = OpexSdf | Error;
-
-export type OpexYearValue = {
-  __typename?: 'OpexYearValue';
-  year?: Maybe<Scalars['Int']>;
-  value?: Maybe<Scalars['Float']>;
-};
+/** Результат мутации без возвращаемого значения. */
+export type NoneOrError = DetailErrors | Error;
 
 export type Organization = {
   __typename?: 'Organization';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type OrganizationUnit = {
   __typename?: 'OrganizationUnit';
-  vid?: Maybe<Scalars['ID']>;
+  adId?: Maybe<Scalars['String']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   organization?: Maybe<Organization>;
   parentOu?: Maybe<OrganizationUnit>;
-  adId?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type Parent = {
   __typename?: 'Parent';
   code: Scalars['String'];
+  isTotal: Scalars['Boolean'];
   name: Scalars['String'];
-  isTotal: boolean;
 };
 
 /** Процентиль распределения. */
@@ -2044,6 +1525,24 @@ export type Percentile = {
   rank: Scalars['Int'];
 };
 
+export type PercentileOutput = {
+  __typename?: 'PercentileOutput';
+  name: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type PercentilePoint = {
+  __typename?: 'PercentilePoint';
+  title: Scalars['Float'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type PlotObject = {
+  __typename?: 'PlotObject';
+  pngBase64?: Maybe<Scalars['String']>;
+};
+
 /** Точка на графике. */
 export type Point = {
   __typename?: 'Point';
@@ -2051,152 +1550,96 @@ export type Point = {
   y: Scalars['Float'];
 };
 
-/** Продукт полученный в результате производства основного вида продукции. */
-export type Product = {
-  __typename?: 'Product';
-  id: Scalars['ID'];
-  /** Название продукта */
-  name?: Maybe<Scalars['String']>;
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  qualityAward?: Maybe<Scalars['Float']>;
-  /** Список связанных цен */
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceType>>>;
+/** Идентификатор процесса генерации файлов результатов расчета. */
+export type ProcessId = {
+  __typename?: 'ProcessId';
+  processId?: Maybe<Scalars['UUID']>;
 };
 
-export type ProductInput = {
-  /** Название продукта */
-  name: Scalars['String'];
-  /** Список связанных цен */
-  prices: Array<Maybe<AverageAnnualPriceInput>>;
+/** Результат запуска генерации файлов результатов расчета. */
+export type ProcessIdOrError = CommonError | Error | ProcessId;
+
+/** An enumeration. */
+export enum ProcessStatusEnum {
+  Complete = 'COMPLETE',
+  Error = 'ERROR',
+  InProgress = 'IN_PROGRESS',
+  Start = 'START',
+}
+
+export type ProcessType = {
+  __typename?: 'ProcessType';
+  /** Сообщение, характеризующее стадию исполнения процеса */
+  message?: Maybe<Scalars['String']>;
+  /** Разная дополнительная информация от процесса */
+  payload?: Maybe<Scalars['String']>;
+  /** Тип процесса */
+  processType: ProcessTypeEnum;
+  /** Прогресс выполнения процесса от 0 до 100 */
+  progress?: Maybe<Scalars['Int']>;
+  /** Статус процесса */
+  statusCode: ProcessStatusEnum;
+  /** Идентификатор процесса */
+  vid: Scalars['UUID'];
 };
 
-export type ProductOrDiffOrError = Product | Error;
-
-/** Вид продукции. Примеры видов продукции - нефть, газ, газовый конденсат, пнг. */
-export type ProductType = {
-  __typename?: 'ProductType';
-  id: Scalars['ID'];
-  /** Название вида продукции */
-  name?: Maybe<Scalars['String']>;
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  qualityDiscount?: Maybe<Scalars['Float']>;
-  qualityAward?: Maybe<Scalars['Float']>;
-  /** Список продукции */
-  products?: Maybe<Array<Maybe<Product>>>;
-  /** Список связанных расчетов */
-  calculations?: Maybe<Array<Maybe<Calculation>>>;
-  netback?: Maybe<NetbackPriceType>;
-};
-
-/** Вид продукции. Примеры видов продукции - нефть, газ, газовый конденсат, пнг. */
-export type ProductTypeNetbackArgs = {
-  id?: Maybe<Scalars['String']>;
-  netbackType?: Maybe<Scalars['String']>;
-};
-
-export type ProductTypeInput = {
-  /** Название вида продукции */
-  name: Scalars['String'];
-  /** Цена реализации */
-  netback?: Maybe<NetbackPriceInput>;
-  /** Список продукции */
-  products?: Maybe<Array<Maybe<ProductInput>>>;
-};
-
-export type ProductTypeOrDiffOrError = ProductType | Error;
-
-/**
- * Мероприятие проекта.
- *
- *     Конфигурируется в рамках проекта в паре с объектом
- */
-export type ProjectActivity = {
-  __typename?: 'ProjectActivity';
-  activityType?: Maybe<Activity>;
-  name?: Maybe<Scalars['String']>;
-  risk?: Maybe<Scalars['String']>;
-};
+/** An enumeration. */
+export enum ProcessTypeEnum {
+  Calculation = 'CALCULATION',
+  CalculationResultArchive = 'CALCULATION_RESULT_ARCHIVE',
+}
 
 /** Проектные данные. */
 export type ProjectInner = {
   __typename?: 'ProjectInner';
-  isFavorite?: Maybe<Scalars['Boolean']>;
-  attendeesTotal?: Maybe<Scalars['Int']>;
-  attendees?: Maybe<Array<Maybe<Attendee>>>;
-  myRoles?: Maybe<Array<Maybe<ProjectRole>>>;
-  filesTotal?: Maybe<Scalars['Int']>;
-  files?: Maybe<Array<Maybe<Attachment>>>;
-  domainSchema?: Maybe<DomainSchema>;
-  versions: Array<Maybe<Scalars['Int']>>;
-  recentlyEdited: Scalars['Boolean'];
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  editedAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
-  type?: Maybe<ProjectTypeEnum>;
-  createdBy?: Maybe<User>;
-  editedBy?: Maybe<User>;
   adId?: Maybe<Scalars['String']>;
+  attendees?: Maybe<Array<Maybe<Attendee>>>;
+  attendeesTotal?: Maybe<Scalars['Int']>;
   authorOu?: Maybe<OrganizationUnit>;
-  region?: Maybe<Region>;
-  coordinates?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']>;
   coordinateSystem?: Maybe<Scalars['String']>;
+  coordinates?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  createdBy?: Maybe<User>;
   description?: Maybe<Scalars['String']>;
-  status?: Maybe<ProjectStatusEnum>;
-  version?: Maybe<Scalars['Int']>;
-  rootEntity?: Maybe<Scalars['String']>;
-  resourceId?: Maybe<Scalars['String']>;
-  rbResult?: Maybe<RbResultQueries>;
+  domain?: Maybe<DomainObjectQuery>;
+  domainSchema?: Maybe<DomainSchema>;
+  editedAt?: Maybe<Scalars['DateTime']>;
+  editedBy?: Maybe<User>;
+  files?: Maybe<Array<Maybe<Attachment>>>;
+  filesTotal?: Maybe<Scalars['Int']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  isFavorite?: Maybe<Scalars['Boolean']>;
+  myRoles?: Maybe<Array<Maybe<ProjectRole>>>;
+  name?: Maybe<Scalars['String']>;
+  /** Данные процесса, запущенного относительно проекта */
+  process?: Maybe<ProcessType>;
+  /** Список процессов, запущенный относительно проекта */
+  processesList?: Maybe<Array<Maybe<ProcessType>>>;
+  recentlyEdited: Scalars['Boolean'];
+  region?: Maybe<Region>;
   /** Запросы к данным ресурсной базы. */
   resourceBase?: Maybe<ResourceBaseQueries>;
-  /** Данные конструктора логики */
-  logic?: Maybe<Logic>;
-  scenario?: Maybe<Array<Maybe<ScenarioType>>>;
-  taxEnvironment?: Maybe<TaxEnvironmentType>;
-  macroparameterSet?: Maybe<MacroparameterSetOrError>;
-  macroparameterSetList?: Maybe<MacroparameterSetListOrError>;
-  opex?: Maybe<OpexOrError>;
-  capex?: Maybe<CapexOrError>;
-  domain?: Maybe<DomainObjectQuery>;
+  resourceId?: Maybe<Scalars['String']>;
+  rootEntity?: Maybe<Scalars['String']>;
+  status?: Maybe<ProjectStatusEnum>;
+  /** All queries related to teos are here. */
+  teosQueries?: Maybe<TeosQueries>;
+  type?: Maybe<ProjectTypeEnum>;
+  version?: Maybe<Scalars['Int']>;
+  versions: Array<Maybe<Scalars['Int']>>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 /** Проектные данные. */
 export type ProjectInnerAttendeesArgs = {
-  orderBy?: Maybe<Array<Maybe<AttendeeOrderBy>>>;
-  sortBy?: Maybe<SortType>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttendeeOrderBy>>>;
+  sortBy?: InputMaybe<SortType>;
 };
 
 /** Проектные данные. */
-export type ProjectInnerScenarioArgs = {
-  version?: Maybe<Scalars['Int']>;
-};
-
-/** Проектные данные. */
-export type ProjectInnerMacroparameterSetArgs = {
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  version?: Maybe<Scalars['Int']>;
-};
-
-/** Проектные данные. */
-export type ProjectInnerMacroparameterSetListArgs = {
-  version?: Maybe<Scalars['Int']>;
-};
-
-/** Проектные данные. */
-export type ProjectInnerOpexArgs = {
-  version?: Maybe<Scalars['Int']>;
-};
-
-/** Проектные данные. */
-export type ProjectInnerCapexArgs = {
-  version?: Maybe<Scalars['Int']>;
+export type ProjectInnerProcessArgs = {
+  vid: Scalars['UUID'];
 };
 
 export type ProjectListSortingSetting = {
@@ -2207,466 +1650,41 @@ export type ProjectListSortingSetting = {
 
 export type ProjectMutation = {
   __typename?: 'ProjectMutation';
-  /** Запросы к данным ресурсной базы. */
-  resourceBase?: Maybe<ResourceBaseMutations>;
-  logic?: Maybe<LogicMutations>;
-  createScenario?: Maybe<ScenarioCreateMutation>;
-  updateScenario?: Maybe<ScenarioUpdateMutation>;
-  deleteScenario?: Maybe<ScenarioDeleteMutation>;
-  createNetback?: Maybe<CreateNetback>;
-  updateNetback?: Maybe<UpdateNetback>;
-  deleteNetback?: Maybe<DeleteNetback>;
-  createProductType?: Maybe<CreateProductType>;
-  updateProductType?: Maybe<UpdateProductType>;
-  deleteProductType?: Maybe<DeleteProductType>;
-  createProduct?: Maybe<CreateProduct>;
-  updateProduct?: Maybe<UpdateProduct>;
-  deleteProduct?: Maybe<DeleteProduct>;
-  createMacroparameterSet?: Maybe<CreateMacroparameterSet>;
-  changeMacroparameterSet?: Maybe<ChangeMacroparameterSet>;
-  deleteMacroparameterSet?: Maybe<DeleteMacroparameterSet>;
-  createMacroparameterGroup?: Maybe<CreateMacroparameterGroup>;
-  changeMacroparameterGroup?: Maybe<ChangeMacroparameterGroup>;
-  deleteMacroparameterGroup?: Maybe<DeleteMacroparameterGroup>;
-  createMacroparameter?: Maybe<CreateMacroparameter>;
-  changeMacroparameter?: Maybe<ChangeMacroparameter>;
-  clearMacroparameterValue?: Maybe<ClearMacroparameterValue>;
-  setMacroparameterYearValue?: Maybe<SetMacroparameterYearValue>;
-  deleteMacroparameter?: Maybe<DeleteMacroparameter>;
-  setOpexAutoexport?: Maybe<SetOpexAutoexport>;
-  changeOpexAutoexport?: Maybe<ChangeOpexAutoexport>;
-  removeOpexAutoexport?: Maybe<Error>;
-  createOpexAutoexportExpense?: Maybe<CreateOpexAutoexportExpense>;
-  changeOpexAutoexportExpense?: Maybe<ChangeOpexAutoexportExpense>;
-  deleteOpexAutoexportExpense?: Maybe<DeleteOpexAutoexportExpense>;
-  setOpexAutoexportExpenseYearValue?: Maybe<SetOpexAutoexportExpenseYearValue>;
-  setOpexMkos?: Maybe<SetOpexMkos>;
-  setOpexSdf?: Maybe<SetOpexSdf>;
-  changeOpexMkos?: Maybe<ChangeOpexMkos>;
-  removeOpexMkos?: Maybe<Error>;
-  createOpexMkosExpense?: Maybe<CreateOpexMkosExpense>;
-  changeOpexMkosExpense?: Maybe<ChangeOpexMkosExpense>;
-  deleteOpexMkosExpense?: Maybe<DeleteOpexMkosExpense>;
-  setOpexMkosExpenseYearValue?: Maybe<SetOpexMkosExpenseYearValue>;
-  createOpexCase?: Maybe<CreateOpexCase>;
-  changeOpexCase?: Maybe<ChangeOpexCase>;
-  deleteOpexCase?: Maybe<DeleteOpexCase>;
-  createOpexCaseExpense?: Maybe<CreateOpexCaseExpense>;
-  changeOpexCaseExpense?: Maybe<ChangeOpexCaseExpense>;
-  deleteOpexCaseExpense?: Maybe<DeleteOpexCaseExpense>;
-  setOpexCaseExpenseYearValue?: Maybe<SetOpexCaseExpenseYearValue>;
-  createCapexExpenseGroup?: Maybe<CreateCapexExpenseGroup>;
-  changeCapexExpenseGroup?: Maybe<ChangeCapexExpenseGroup>;
-  deleteCapexExpenseGroup?: Maybe<DeleteCapexExpenseGroup>;
-  setCapexExpenseYearValue?: Maybe<SetCapexExpenseYearValue>;
-  createCapexExpense?: Maybe<CreateCapexExpense>;
-  changeCapexExpense?: Maybe<ChangeCapexExpense>;
-  deleteCapexExpense?: Maybe<DeleteCapexExpense>;
-  createCapexGlobalValue?: Maybe<CreateCapexGlobalValue>;
-  updateCapexGlobalValue?: Maybe<UpdateCapexGlobalValue>;
-  deleteCapexGlobalValue?: Maybe<DeleteCapexGlobalValue>;
-  macroparameter?: Maybe<MacroparameterMutation>;
-  capex?: Maybe<CapexMutation>;
-  opex?: Maybe<OpexMutation>;
-  scenario?: Maybe<ScenarioMutation>;
-  createCapex?: Maybe<CreateCapex>;
   domain?: Maybe<DomainMutations>;
-};
-
-export type ProjectMutationCreateScenarioArgs = {
-  description?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-};
-
-export type ProjectMutationUpdateScenarioArgs = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  productTypes?: Maybe<Array<Maybe<ProductTypeInput>>>;
-  scenarioId: Scalars['ID'];
-};
-
-export type ProjectMutationDeleteScenarioArgs = {
-  scenarioId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateNetbackArgs = {
-  netbackName: Scalars['String'];
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationUpdateNetbackArgs = {
-  netbackName?: Maybe<Scalars['String']>;
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteNetbackArgs = {
-  netbackName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateProductTypeArgs = {
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  productTypeName: Scalars['String'];
-  qualityAward?: Maybe<Scalars['Float']>;
-  qualityDiscount?: Maybe<Scalars['Float']>;
-  scenarioId: Scalars['ID'];
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationUpdateProductTypeArgs = {
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  productTypeId: Scalars['ID'];
-  productTypeName?: Maybe<Scalars['String']>;
-  qualityAward?: Maybe<Scalars['Float']>;
-  qualityDiscount?: Maybe<Scalars['Float']>;
-  scenarioId: Scalars['ID'];
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationDeleteProductTypeArgs = {
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateProductArgs = {
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-};
-
-export type ProjectMutationUpdateProductArgs = {
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productName?: Maybe<Scalars['String']>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-};
-
-export type ProjectMutationDeleteProductArgs = {
-  productName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateMacroparameterSetArgs = {
-  allProjects?: Maybe<Scalars['Boolean']>;
-  caption?: Maybe<Scalars['String']>;
-  category?: Maybe<MacroparameterSetCategory>;
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationChangeMacroparameterSetArgs = {
-  allProjects?: Maybe<Scalars['Boolean']>;
-  caption?: Maybe<Scalars['String']>;
-  category?: Maybe<MacroparameterSetCategory>;
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationDeleteMacroparameterSetArgs = {
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type ProjectMutationCreateMacroparameterGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type ProjectMutationChangeMacroparameterGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-};
-
-export type ProjectMutationDeleteMacroparameterGroupArgs = {
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type ProjectMutationCreateMacroparameterArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationChangeMacroparameterArgs = {
-  caption?: Maybe<Scalars['String']>;
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationClearMacroparameterValueArgs = {
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-};
-
-export type ProjectMutationSetMacroparameterYearValueArgs = {
-  macroparameterGroupId: Scalars['ID'];
-  macroparameterId: Scalars['ID'];
-  macroparameterSetId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type ProjectMutationDeleteMacroparameterArgs = {
-  macroparameterGroupId?: Maybe<Scalars['ID']>;
-  macroparameterId?: Maybe<Scalars['ID']>;
-  macroparameterSetId?: Maybe<Scalars['ID']>;
-};
-
-export type ProjectMutationSetOpexAutoexportArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationChangeOpexAutoexportArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationCreateOpexAutoexportExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationChangeOpexAutoexportExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteOpexAutoexportExpenseArgs = {
-  expenseId: Scalars['ID'];
-};
-
-export type ProjectMutationSetOpexAutoexportExpenseYearValueArgs = {
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type ProjectMutationSetOpexMkosArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationSetOpexSdfArgs = {
-  sdf?: Maybe<Scalars['Boolean']>;
-};
-
-export type ProjectMutationChangeOpexMkosArgs = {
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationCreateOpexMkosExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationChangeOpexMkosExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteOpexMkosExpenseArgs = {
-  expenseId: Scalars['ID'];
-};
-
-export type ProjectMutationSetOpexMkosExpenseYearValueArgs = {
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type ProjectMutationCreateOpexCaseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationChangeOpexCaseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationDeleteOpexCaseArgs = {
-  caseId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateOpexCaseExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationChangeOpexCaseExpenseArgs = {
-  caption?: Maybe<Scalars['String']>;
-  caseId: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  expenseId: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteOpexCaseExpenseArgs = {
-  caseId: Scalars['ID'];
-  expenseId: Scalars['ID'];
-};
-
-export type ProjectMutationSetOpexCaseExpenseYearValueArgs = {
-  caseId: Scalars['ID'];
-  expenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type ProjectMutationCreateCapexExpenseGroupArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-};
-
-export type ProjectMutationChangeCapexExpenseGroupArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-};
-
-export type ProjectMutationDeleteCapexExpenseGroupArgs = {
-  capexExpenseGroupId?: Maybe<Scalars['ID']>;
-};
-
-export type ProjectMutationSetCapexExpenseYearValueArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-  value: Scalars['Float'];
-  year: Scalars['Int'];
-};
-
-export type ProjectMutationCreateCapexExpenseArgs = {
-  capexExpenseGroupId?: Maybe<Scalars['ID']>;
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationChangeCapexExpenseArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteCapexExpenseArgs = {
-  capexExpenseGroupId: Scalars['ID'];
-  capexExpenseId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateCapexGlobalValueArgs = {
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationUpdateCapexGlobalValueArgs = {
-  capexGlobalValueId: Scalars['ID'];
-  caption?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  unit?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ProjectMutationDeleteCapexGlobalValueArgs = {
-  capexGlobalValueId: Scalars['ID'];
-};
-
-export type ProjectMutationCreateCapexArgs = {
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
+  /** Мутации данных ресурсной базы. */
+  resourceBase?: Maybe<ResourceBaseMutations>;
+  /** All mutations related to teos. */
+  teosMutations?: Maybe<TeosMutations>;
 };
 
 export type ProjectMutationOrError =
-  | ProjectMutation
   | Error
+  | ProjectMutation
   | UpdateProjectInnerDiff;
 
 /** An enumeration. */
 export enum ProjectOrderByEnum {
+  CreatedAt = 'CREATED_AT',
+  CreatedBy = 'CREATED_BY',
+  Description = 'DESCRIPTION',
+  EditedAt = 'EDITED_AT',
+  EditedBy = 'EDITED_BY',
   IsFavorite = 'IS_FAVORITE',
   Name = 'NAME',
-  Description = 'DESCRIPTION',
   Region = 'REGION',
-  CreatedBy = 'CREATED_BY',
-  CreatedAt = 'CREATED_AT',
-  EditedBy = 'EDITED_BY',
-  EditedAt = 'EDITED_AT',
 }
 
 /** Пространство имен для работы с проектом. */
 export type ProjectQueries = {
   __typename?: 'ProjectQueries';
+  /** Настройки расчёта */
+  calculationProperties?: Maybe<CalculationProperties>;
+  /** Данные проекта */
+  loadFromDatabase?: Maybe<RbProject>;
   /** Шаблон структуры проекта */
   template?: Maybe<RbProject>;
   /** Валидация структуры проекта перед импортом/экспортом */
   validateBeforeLoad?: Maybe<Array<DetailError>>;
-  /** Данные проекта */
-  loadFromDatabase?: Maybe<RbProject>;
-  /** Настройки расчёта */
-  calculationProperties?: Maybe<CalculationProperties>;
 };
 
 /** Пространство имен для работы с проектом. */
@@ -2676,13 +1694,13 @@ export type ProjectQueriesValidateBeforeLoadArgs = {
 
 export type ProjectRole = {
   __typename?: 'ProjectRole';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
-  editedAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
   defaultAttachmentType?: Maybe<AttachmentType>;
+  editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 /** An enumeration. */
@@ -2693,32 +1711,39 @@ export enum ProjectStatusEnum {
 
 export type ProjectStructure = {
   __typename?: 'ProjectStructure';
-  /** Список доменных сущностей структуры проекта */
-  domainEntities: Array<RbDomainEntity>;
   /** Список атрибутов структуры проекта */
   attributes: Array<Attribute>;
-  /** Список рисков структуры проекта */
-  risks: Array<Risk>;
   commonRisks: Array<Maybe<CommonRisk>>;
-  /** Список геологических объектов структуры проекта */
-  domainObjects: Array<DomainObject>;
   /** Список скоррелированных пар */
   correlations: Array<Maybe<CorrelationElement>>;
+  /** Список доменных сущностей структуры проекта */
+  domainEntities: Array<RbDomainEntity>;
+  /** Список геологических объектов структуры проекта */
+  domainObjects: Array<DomainObject>;
+  /** Список рисков структуры проекта */
+  risks: Array<Risk>;
 };
 
 export type ProjectStructureInput = {
-  /** Список доменных сущностей структуры проекта */
-  domainEntities: Array<RbDomainEntityInput>;
   /** Список атрибутов структуры проекта */
   attributes: Array<AttributeInput>;
-  /** Список рисков структуры проекта */
-  risks: Array<RiskInput>;
+  /** Общие риски */
+  commonRisks?: InputMaybe<Array<CommonRiskInput>>;
+  /** Список скоррелированных пар */
+  correlations?: InputMaybe<Array<CorrelationElementInput>>;
+  /** Список доменных сущностей структуры проекта */
+  domainEntities: Array<RbDomainEntityInput>;
   /** Список геологических объектов структуры проекта */
   domainObjects: Array<DomainObjectInput>;
-  /** Общие риски */
-  commonRisks?: Maybe<Array<CommonRiskInput>>;
-  /** Список скоррелированных пар */
-  correlations?: Maybe<Array<CorrelationElementInput>>;
+  /** Список рисков структуры проекта */
+  risks: Array<RiskInput>;
+};
+
+export type ProjectStructureResult = {
+  __typename?: 'ProjectStructureResult';
+  attributes: Array<AttributeResult>;
+  domainEntities: Array<DomainEntityResult>;
+  domainObjects: Array<DomainObjectResult>;
 };
 
 /** An enumeration. */
@@ -2736,42 +1761,43 @@ export enum ProjectTypeEnum {
  *                     example: Str, Int, RefLink('Model')
  *         unit - Attributes unit, example: km^2, m^3
  *         validation_rules - Rules for validation object attribute value
+ *
  */
 export type PropertyMeta = {
   __typename?: 'PropertyMeta';
-  title?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  entity?: Maybe<DomainEntity>;
   attrType?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  entity?: Maybe<DomainEntity>;
+  name?: Maybe<Scalars['String']>;
+  required?: Maybe<Scalars['Boolean']>;
+  title?: Maybe<Scalars['String']>;
   unit?: Maybe<Scalars['String']>;
   validationRules?: Maybe<ValidationRules>;
-  description?: Maybe<Scalars['String']>;
-  required?: Maybe<Scalars['Boolean']>;
 };
 
 export type Query = {
   __typename?: 'Query';
+  project?: Maybe<ProjectInner>;
   /** Актуальная версия текущего проекта */
   version?: Maybe<Scalars['Int']>;
-  project?: Maybe<ProjectInner>;
 };
 
 export type RbDomainEntity = {
   __typename?: 'RBDomainEntity';
   /** Кодовое обозначение доменной сущности геологического объекта */
   code: Scalars['String'];
-  /** Имя доменной сущности геологического объекта */
-  name: Scalars['String'];
   /** Иконка доменной сущности геологического объекта */
   icon: RbDomainEntityIcons;
+  /** Имя доменной сущности геологического объекта */
+  name: Scalars['String'];
   visible: Visible;
 };
 
 /** Список иконок доменной сущности геологического объекта. */
 export enum RbDomainEntityIcons {
-  LicensingRoundIcon = 'LICENSING_ROUND_ICON',
   FieldIcon = 'FIELD_ICON',
   FormationIcon = 'FORMATION_ICON',
+  LicensingRoundIcon = 'LICENSING_ROUND_ICON',
   OilPoolIcon = 'OIL_POOL_ICON',
   WellIcon = 'WELL_ICON',
 }
@@ -2779,140 +1805,269 @@ export enum RbDomainEntityIcons {
 export type RbDomainEntityInput = {
   /** Кодовое обозначение доменной сущности геологического объекта */
   code: Scalars['String'];
-  /** Имя доменной сущности геологического объекта */
-  name: Scalars['String'];
   /** Иконка доменной сущности геологического объекта */
   icon: RbDomainEntityIcons;
+  /** Имя доменной сущности геологического объекта */
+  name: Scalars['String'];
   visible: VisibleInput;
+};
+
+/** Список доменных сущностей. */
+export type RbDomainEntityList = {
+  __typename?: 'RBDomainEntityList';
+  result?: Maybe<Array<Maybe<RbDomainEntity>>>;
+};
+
+/** Результат изменения списка доменных сущностей. */
+export type RbDomainEntityListOrError =
+  | DetailErrors
+  | Error
+  | RbDomainEntityList;
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutations = {
+  __typename?: 'RBDomainObjectMutations';
+  create?: Maybe<DomainObjectOrError>;
+  delete?: Maybe<NoneOrError>;
+  move?: Maybe<DomainObjectOrError>;
+  set?: Maybe<SavedOrError>;
+  setAttribute?: Maybe<DistributionSetResultOrError>;
+  setCategory?: Maybe<DomainObjectOrError>;
+  setFluid?: Maybe<DomainObjectOrError>;
+  setHierarchyLevel?: Maybe<DomainObjectOrError>;
+  setRiskValue?: Maybe<DomainObjectOrError>;
+  setSaturationProbability?: Maybe<DomainObjectOrError>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsCreateArgs = {
+  fluid: GeoObjectFluidType;
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsMoveArgs = {
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetArgs = {
+  domainObject: DomainObjectInput;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetAttributeArgs = {
+  code: Scalars['String'];
+  distribution?: InputMaybe<DistributionInput>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetCategoryArgs = {
+  category: GeoObjectCategories;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetFluidArgs = {
+  fluid: GeoObjectFluidType;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetHierarchyLevelArgs = {
+  code: Scalars['String'];
+  value?: InputMaybe<Scalars['String']>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetRiskValueArgs = {
+  code: Scalars['String'];
+  value?: InputMaybe<Scalars['Float']>;
+};
+
+/** Мутации доменных объектов. */
+export type RbDomainObjectMutationsSetSaturationProbabilityArgs = {
+  fluid: GeoObjectFluidType;
+  value?: InputMaybe<Scalars['Float']>;
 };
 
 /** Список кодов ошибок приложения. */
 export enum RbErrorCodes {
-  /** Ошибка в загружаемой структуре */
-  IncorrectProjectStructure = 'INCORRECT_PROJECT_STRUCTURE',
-  /** В строке таблицы структуры должна быть заполнена хотя бы одна ячейка */
-  MustBeAtLeastOneCell = 'MUST_BE_AT_LEAST_ONE_CELL',
-  /** В таблице структуры не может быть одинаковых строк */
-  IdenticalRowInTableData = 'IDENTICAL_ROW_IN_TABLE_DATA',
-  /** Версия импортируемого файла не соответствует версии шаблона структуры */
-  IncorrectFileVersion = 'INCORRECT_FILE_VERSION',
-  /** Некорректная зависимость параметров распределения */
-  DistributionParametersIncorrectRelation = 'DISTRIBUTION_PARAMETERS_INCORRECT_RELATION',
-  /** Параметр распределения выходит за границы допустимых значений */
-  DistributionParameterOutOfRange = 'DISTRIBUTION_PARAMETER_OUT_OF_RANGE',
+  /** Не удалось обработать файл вложения */
+  AttachmentError = 'ATTACHMENT_ERROR',
+  /** Атрибут не найден */
+  AttributeNotFound = 'ATTRIBUTE_NOT_FOUND',
+  /** Значение границы усечения отрицательно */
+  BoundValueIsNegative = 'BOUND_VALUE_IS_NEGATIVE',
+  /** У проекта отсутствуют результаты вычислений */
+  CalculationResultNotFound = 'CALCULATION_RESULT_NOT_FOUND',
   /** Для старта расчётов заполните ячейку таблицы */
   CellValueIsNull = 'CELL_VALUE_IS_NULL',
-  /** Вероятность может иметь значение в пределах 0.0 < p <= 1.0 */
-  InvalidProbabilityValue = 'INVALID_PROBABILITY_VALUE',
-  /** Некорректное значение параметра для этого способа задания */
-  IncorrectParameterValueForDefinition = 'INCORRECT_PARAMETER_VALUE_FOR_DEFINITION',
-  /** Некорректный порядок значений процентилей */
-  IncorrectOrderOfPercentileValues = 'INCORRECT_ORDER_OF_PERCENTILE_VALUES',
-  /** Некорректный порядок рангов процентилей */
-  IncorrectOrderOfPercentileRanks = 'INCORRECT_ORDER_OF_PERCENTILE_RANKS',
-  /** Квантиль должен быть больше расположения */
-  QuantileMustBeMoreThanLocation = 'QUANTILE_MUST_BE_MORE_THAN_LOCATION',
+  /** Имя общего риска должно быть уникальным */
+  CommonRiskNameMustBeUnique = 'COMMON_RISK_NAME_MUST_BE_UNIQUE',
+  /** Концепция в проекте не найдена */
+  ConceptionNotFound = 'CONCEPTION_NOT_FOUND',
   /** В концепции отсутствует поле "вероятность" */
   ConceptionProbabilityIsNone = 'CONCEPTION_PROBABILITY_IS_NONE',
-  /** Найдены концепции с не уникальными наименованиями */
-  DuplicatingConceptionsNames = 'DUPLICATING_CONCEPTIONS_NAMES',
-  /** Сумма вероятностей всех концепций не равна 1 */
-  InvalidConceptionsProbabilitiesSum = 'INVALID_CONCEPTIONS_PROBABILITIES_SUM',
-  /** Распределение не может быть восстановлено */
-  DistributionCannotBeRestored = 'DISTRIBUTION_CANNOT_BE_RESTORED',
-  /** Параметр version не найден. */
-  VersionParamNotFound = 'VERSION_PARAM_NOT_FOUND',
   /** Значения доверительного интервала отрицательны */
   ConfidenceIntervalIsNegative = 'CONFIDENCE_INTERVAL_IS_NEGATIVE',
   /** Значения доверительного интервала не определены */
   ConfidenceIntervalIsNotDefined = 'CONFIDENCE_INTERVAL_IS_NOT_DEFINED',
-  /** Значение границы усечения отрицательно */
-  BoundValueIsNegative = 'BOUND_VALUE_IS_NEGATIVE',
-  /** Значение случайной величины отрицательное. */
-  RandomVariableValueIsNegative = 'RANDOM_VARIABLE_VALUE_IS_NEGATIVE',
+  /** Интервал не попадает в распределение */
+  ConfidenceIntervalOutOfDistributionDomain = 'CONFIDENCE_INTERVAL_OUT_OF_DISTRIBUTION_DOMAIN',
+  /** Матрица корреляций не является валидной */
+  CorrelationMatrixInvalid = 'CORRELATION_MATRIX_INVALID',
+  /** Подбор по данным невозможен, число значений в данных должно быть 15 или выше */
+  CustomSamplesCountError = 'CUSTOM_SAMPLES_COUNT_ERROR',
+  /** Подбор по данным невозможен, число положительных значений в данных должно быть 15 или выше */
+  CustomSamplesFewPositiveValuesError = 'CUSTOM_SAMPLES_FEW_POSITIVE_VALUES_ERROR',
+  /** Временно отключенная функциональность */
+  DisabledFeature = 'DISABLED_FEATURE',
+  /** Распределение не может быть восстановлено */
+  DistributionCannotBeRestored = 'DISTRIBUTION_CANNOT_BE_RESTORED',
+  /** Некорректная зависимость параметров распределения */
+  DistributionParametersIncorrectRelation = 'DISTRIBUTION_PARAMETERS_INCORRECT_RELATION',
+  /** Параметр распределения выходит за границы допустимых значений */
+  DistributionParameterOutOfRange = 'DISTRIBUTION_PARAMETER_OUT_OF_RANGE',
+  /** Доменный объект не найден */
+  DomainObjectNotFound = 'DOMAIN_OBJECT_NOT_FOUND',
+  /** Дублируются имена колонок */
+  DuplicatingColumns = 'DUPLICATING_COLUMNS',
+  /** Найдены концепции с не уникальными наименованиями */
+  DuplicatingConceptionsNames = 'DUPLICATING_CONCEPTIONS_NAMES',
   /** В проекте отсутствуют доменные сущности */
   EmptyDomainEntities = 'EMPTY_DOMAIN_ENTITIES',
   /** В проекте отсутствуют доменные объекты */
   EmptyDomainObjects = 'EMPTY_DOMAIN_OBJECTS',
-  /** Дублируются имена колонок */
-  DuplicatingColumns = 'DUPLICATING_COLUMNS',
-  /** Для категории 'Запасы' риски не должны быть указаны */
-  RisksNotApplicableToReserves = 'RISKS_NOT_APPLICABLE_TO_RESERVES',
+  /** Границы интервала не соответствуют области допустимых значений параметра */
+  ForbiddenParameterValues = 'FORBIDDEN_PARAMETER_VALUES',
+  /** В таблице структуры не может быть одинаковых строк */
+  IdenticalRowInTableData = 'IDENTICAL_ROW_IN_TABLE_DATA',
+  /** Недостаточно элементов в группе общего риска */
+  IncompleteCommonRiskGroup = 'INCOMPLETE_COMMON_RISK_GROUP',
+  /** Версия импортируемого файла не соответствует версии шаблона структуры */
+  IncorrectFileVersion = 'INCORRECT_FILE_VERSION',
+  /** Некорректный порядок рангов процентилей */
+  IncorrectOrderOfPercentileRanks = 'INCORRECT_ORDER_OF_PERCENTILE_RANKS',
+  /** Некорректный порядок значений процентилей */
+  IncorrectOrderOfPercentileValues = 'INCORRECT_ORDER_OF_PERCENTILE_VALUES',
+  /** Некорректное значение параметра для этого способа задания */
+  IncorrectParameterValueForDefinition = 'INCORRECT_PARAMETER_VALUE_FOR_DEFINITION',
+  /** Ошибка в загружаемой структуре */
+  IncorrectProjectStructure = 'INCORRECT_PROJECT_STRUCTURE',
+  /** Общий риск может иметь значение в пределах 0.0 < r <= 1.0 */
+  InvalidCommonRiskValue = 'INVALID_COMMON_RISK_VALUE',
+  /** Сумма вероятностей всех концепций не равна 1 */
+  InvalidConceptionsProbabilitiesSum = 'INVALID_CONCEPTIONS_PROBABILITIES_SUM',
   /** Значение корреляции может находиться в интервале -1.0 <= p <= 1.0 */
   InvalidCorrelationValue = 'INVALID_CORRELATION_VALUE',
+  /** Вероятность может иметь значение в пределах 0.0 < p <= 1.0 */
+  InvalidProbabilityValue = 'INVALID_PROBABILITY_VALUE',
+  /** Значение риска не может превышать значение группы риска */
+  InvalidProbabilityValueByCommonRisk = 'INVALID_PROBABILITY_VALUE_BY_COMMON_RISK',
+  /** В строке таблицы структуры должна быть заполнена хотя бы одна ячейка */
+  MustBeAtLeastOneCell = 'MUST_BE_AT_LEAST_ONE_CELL',
+  /** Квантиль должен быть больше расположения */
+  QuantileMustBeMoreThanLocation = 'QUANTILE_MUST_BE_MORE_THAN_LOCATION',
+  /** Значение случайной величины отрицательное. */
+  RandomVariableValueIsNegative = 'RANDOM_VARIABLE_VALUE_IS_NEGATIVE',
+  /** Для категории 'Запасы' риски не должны быть указаны */
+  RisksNotApplicableToReserves = 'RISKS_NOT_APPLICABLE_TO_RESERVES',
   /** Зависимые ячейки должны быть разными */
   SameCellsInCorrelationPair = 'SAME_CELLS_IN_CORRELATION_PAIR',
-  /** Доменный объект не найден */
-  DomainObjectNotFound = 'DOMAIN_OBJECT_NOT_FOUND',
-  /** Атрибут не найден */
-  AttributeNotFound = 'ATTRIBUTE_NOT_FOUND',
-  /** Матрица корреляций не является валидной */
-  CorrelationMatrixInvalid = 'CORRELATION_MATRIX_INVALID',
-  /** Не удалось обработать файл вложения */
-  AttachmentError = 'ATTACHMENT_ERROR',
+  /** Вероятности целевого насыщения не должны дублироваться */
+  SaturationProbabilitiesCategoryHaveDuplicate = 'SATURATION_PROBABILITIES_CATEGORY_HAVE_DUPLICATE',
+  /** Сумма вероятностей целевого насыщения должна быть равно 1 */
+  SaturationProbabilitiesSumIsInvalide = 'SATURATION_PROBABILITIES_SUM_IS_INVALIDE',
+  /** Значение вероятности целевого насыщения не у смешанного кейса должно быть 1 */
+  SaturationProbabilitieValueInvalideFluid = 'SATURATION_PROBABILITIE_VALUE_INVALIDE_FLUID',
+  /** Значение вероятности целевого насыщения должно быть в [0, 1] */
+  SaturationProbabilitieValueIsInvalide = 'SATURATION_PROBABILITIE_VALUE_IS_INVALIDE',
+  /** Параметр version не найден. */
+  VersionParamNotFound = 'VERSION_PARAM_NOT_FOUND',
+  /** Неверный аргумент операции */
+  WrongArgument = 'WRONG_ARGUMENT',
+  /** Некорректный код подсчетного параметра */
+  WrongAttribute = 'WRONG_ATTRIBUTE',
+  /** Некорректный код группы общего риска */
+  WrongCommonRisk = 'WRONG_COMMON_RISK',
   /** Некорректное имя концепции */
   WrongConception = 'WRONG_CONCEPTION',
   /** Некорректный идентификатор объекта */
   WrongObjectVid = 'WRONG_OBJECT_VID',
-  /** Некорректный код подсчетного параметра */
-  WrongAttribute = 'WRONG_ATTRIBUTE',
-  /** Временно отключенная функциональность */
-  DisabledFeature = 'DISABLED_FEATURE',
-  /** Имя общего риска должно быть уникальным */
-  CommonRiskNameMustBeUnique = 'COMMON_RISK_NAME_MUST_BE_UNIQUE',
-  /** Общий риск может иметь значение в пределах 0.0 < r <= 1.0 */
-  InvalidCommonRiskValue = 'INVALID_COMMON_RISK_VALUE',
+  /** Некорректный код риска */
+  WrongRisk = 'WRONG_RISK',
 }
 
 /** Интерфейс ошибок, отображаемых пользователю. */
 export type RbErrorInterface = {
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: RbErrorCodes;
+  /** Индекс концепции, к которой относится ошибка */
+  conceptionIdx?: Maybe<Scalars['Int']>;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
 };
 
 export type RbProject = {
   __typename?: 'RBProject';
-  /** Версия шаблона структуры проекта */
-  version: Scalars['String'];
   /** Список концепций проекта */
   conceptions: Array<Conception>;
+  /** Версия шаблона структуры проекта */
+  version: Scalars['String'];
 };
 
 export type RbProjectInput = {
-  /** Версия шаблона структуры проекта */
-  version: Scalars['String'];
   /** Список концепций проекта */
   conceptions: Array<ConceptionInput>;
-};
-
-/** Квери данных ресурсной базы. */
-export type RbResultQueries = {
-  __typename?: 'RBResultQueries';
-  result: { resultTable: ResultTableQuery };
+  /** Версия шаблона структуры проекта */
+  version: Scalars['String'];
 };
 
 export type Region = {
   __typename?: 'Region';
-  vid?: Maybe<Scalars['ID']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
+  country?: Maybe<Country>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
   fullName?: Maybe<Scalars['String']>;
-  country?: Maybe<Country>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
+};
+
+export type ResourceBaseDecimal = {
+  __typename?: 'ResourceBaseDecimal';
+  projectDecimals?: Maybe<Array<AttributeDecimal>>;
 };
 
 /** Мутации данных ресурсной базы. */
 export type ResourceBaseMutations = {
   __typename?: 'ResourceBaseMutations';
-  loadSampledAttributeValue?: Maybe<DistributionOrError>;
-  updateRiskValue?: Maybe<UpdateRiskValueResult>;
   calculateProject?: Maybe<CalculatedOrError>;
-  saveProject?: Maybe<SavedOrError>;
+  conception?: Maybe<ConceptionMutations>;
+  /** Запуск генерации архива с результатами расчёта. */
+  generateCalculationResultArchive?: Maybe<ProcessIdOrError>;
+  loadSampledAttributeValue?: Maybe<DistributionOrError>;
+  loadSampledAttributeValueWithSelection?: Maybe<DistributionOrError>;
   saveCalculationProperties?: Maybe<SaveCalculationPropertiesMutation>;
+  saveProject?: Maybe<SavedOrError>;
+  updateRiskValue?: Maybe<UpdateRiskValueResult>;
+};
+
+/** Мутации данных ресурсной базы. */
+export type ResourceBaseMutationsCalculateProjectArgs = {
+  projectInput?: InputMaybe<RbProjectInput>;
+};
+
+/** Мутации данных ресурсной базы. */
+export type ResourceBaseMutationsConceptionArgs = {
+  idx?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации данных ресурсной базы. */
+export type ResourceBaseMutationsGenerateCalculationResultArchiveArgs = {
+  plots?: InputMaybe<Scalars['Boolean']>;
+  samples?: InputMaybe<Scalars['Boolean']>;
+  statistics?: InputMaybe<Scalars['Boolean']>;
 };
 
 /** Мутации данных ресурсной базы. */
@@ -2924,13 +2079,16 @@ export type ResourceBaseMutationsLoadSampledAttributeValueArgs = {
 };
 
 /** Мутации данных ресурсной базы. */
-export type ResourceBaseMutationsUpdateRiskValueArgs = {
-  projectStructure: ProjectStructureInput;
+export type ResourceBaseMutationsLoadSampledAttributeValueWithSelectionArgs = {
+  attribute: Scalars['String'];
+  conception: Scalars['String'];
+  objectVid: Scalars['UUID'];
+  sourceVid: Scalars['UUID'];
 };
 
 /** Мутации данных ресурсной базы. */
-export type ResourceBaseMutationsCalculateProjectArgs = {
-  projectInput?: Maybe<RbProjectInput>;
+export type ResourceBaseMutationsSaveCalculationPropertiesArgs = {
+  data?: InputMaybe<CalculationPropertiesInputType>;
 };
 
 /** Мутации данных ресурсной базы. */
@@ -2939,83 +2097,38 @@ export type ResourceBaseMutationsSaveProjectArgs = {
 };
 
 /** Мутации данных ресурсной базы. */
-export type ResourceBaseMutationsSaveCalculationPropertiesArgs = {
-  data?: Maybe<CalculationPropertiesInputType>;
+export type ResourceBaseMutationsUpdateRiskValueArgs = {
+  projectStructure: ProjectStructureInput;
 };
 
 /** Запросы к данным ресурсной базы. */
 export type ResourceBaseQueries = {
   __typename?: 'ResourceBaseQueries';
-  /** Пространство имен для работы с проектом. */
-  project?: Maybe<ProjectQueries>;
+  conception?: Maybe<ConceptionQueries>;
+  /** Пространство имен для работы с подбром распределения по данным. */
+  customDataSelection?: Maybe<DistributionCustomDataSelection>;
+  decimals?: Maybe<ResourceBaseDecimal>;
   /** Пространство имен для работы с распределениями. */
   distribution?: Maybe<DistributionQueries>;
+  /** Пространство имен для работы с проектом. */
+  project?: Maybe<ProjectQueries>;
+  result: ResultQuery;
 };
 
-export type Result = {
-  __typename?: 'Result';
-  vid?: Maybe<Scalars['ID']>;
+/** Запросы к данным ресурсной базы. */
+export type ResourceBaseQueriesConceptionArgs = {
+  idx: Scalars['Int'];
 };
 
-export type ResultAttribute = {
-  __typename?: 'ResultAttribute';
-  code: Scalars['String'];
-  name: Scalars['String'];
-  shortName: Scalars['String'];
-  units: Scalars['String'];
-  geoType: Scalars['String'];
-  decimal: Scalars['Int'];
-  viewType: Scalars['String'];
-  visible: Visible;
-};
-
-export type ResultAttributeValue = {
-  __typename?: 'ResultAttributeValue';
-  code: Scalars['String'];
-  percentiles: Array<Scalars['Int']>;
-  values: Array<Scalars['Float' | 'String']>;
-};
-
-export type ResultDomainEntity = {
-  __typename?: 'ResultDomainEntity';
-  code: Scalars['String'];
-  name: Scalars['String'];
-  visible: Visible;
-};
-
-export type ResultDomainObject = {
-  __typename?: 'ResultDomainObject';
-  parents: Array<Parent>;
-  geoFluidTypes: string[];
-  attributeValues: Array<ResultAttributeValue>;
-};
-
-export type ResultProjectStructure = {
-  __typename?: 'ResultProjectStructure';
-  domainEntities: Array<ResultDomainEntity>;
-  attributes: Array<ResultAttribute>;
-  domainObjects: Array<ResultDomainObject>;
-};
-
-export type HistogramStatisticValues = {
-  name: string;
-  value: string;
-};
-
-export type HistogramStatistic = {
-  title: string;
-  decimal: number;
-  percentiles: HistogramStatisticValues[];
-  mathStats: HistogramStatisticValues[];
+export type ResultQuery = {
+  __typename?: 'ResultQuery';
+  histograms: HistogramResultQuery;
+  resultTable: ResultTableQuery;
 };
 
 export type ResultTableQuery = {
   __typename?: 'ResultTableQuery';
-  template?: Maybe<ResultProjectStructure>;
-};
-
-export type ResultTableQueryTemplateArgs = {
-  projectId: Scalars['ID'];
+  template?: Maybe<ProjectStructureResult>;
 };
 
 export type Risk = {
@@ -3033,23 +2146,83 @@ export type RiskInput = {
   name: Scalars['String'];
 };
 
+/** Список рисков. */
+export type RiskList = {
+  __typename?: 'RiskList';
+  result?: Maybe<Array<Maybe<Attribute>>>;
+};
+
+/** Результат изменения списка рисков. */
+export type RiskListOrError = DetailErrors | Error | RiskList;
+
+/** Мутации атрибутов геологических объектов. */
+export type RiskMutations = {
+  __typename?: 'RiskMutations';
+  create?: Maybe<RiskListOrError>;
+  delete?: Maybe<RiskListOrError>;
+  move?: Maybe<RiskListOrError>;
+  update?: Maybe<RiskListOrError>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type RiskMutationsCreateArgs = {
+  name: Scalars['String'];
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type RiskMutationsMoveArgs = {
+  place?: InputMaybe<Scalars['Int']>;
+};
+
+/** Мутации атрибутов геологических объектов. */
+export type RiskMutationsUpdateArgs = {
+  name?: InputMaybe<Scalars['String']>;
+};
+
 export type RiskValue = {
   __typename?: 'RiskValue';
   /** Кодовое обозначение риска */
   code: Scalars['String'];
-  /** Значение риска */
-  value?: Maybe<Scalars['Float']>;
   /** Группа риска */
   group?: Maybe<Scalars['String']>;
+  /** Значение риска */
+  value?: Maybe<Scalars['Float']>;
 };
 
 export type RiskValueInput = {
   /** Кодовое обозначение риска */
   code: Scalars['String'];
-  /** Значение риска */
-  value?: Maybe<Scalars['Float']>;
   /** Группа риска */
-  group?: Maybe<Scalars['String']>;
+  group?: InputMaybe<Scalars['String']>;
+  /** Значение риска */
+  value?: InputMaybe<Scalars['Float']>;
+};
+
+export type Row = {
+  __typename?: 'Row';
+  cells: Array<Cell>;
+};
+
+export type RowL = {
+  __typename?: 'RowL';
+  cells: Array<Maybe<CellL>>;
+  id: Scalars['UUID'];
+};
+
+export type SaturationProbabilities = {
+  __typename?: 'SaturationProbabilities';
+  /** Вероятность насыщения */
+  category: GeoObjectFluidType;
+  /** значение вероятности насыщения */
+  value: Scalars['Float'];
+};
+
+export type SaturationProbabilitiesInput = {
+  /** Вероятность насыщения */
+  category: GeoObjectFluidType;
+  /** значение вероятности насыщения */
+  value: Scalars['Float'];
 };
 
 export type SaveCalculationPropertiesMutation = {
@@ -3059,287 +2232,29 @@ export type SaveCalculationPropertiesMutation = {
 
 /** Результат сохранения проекта. */
 export type SavedOrError =
-  | TableErrors
+  | DetailErrors
   | DistributionDefinitionErrors
   | Error
-  | DetailErrors
+  | TableErrors
   | ValidationError;
 
 /** Результат сохранения настроек расчёта проекта. */
-export type SavedPropertiesOrError = ValidationError | Error;
+export type SavedPropertiesOrError = Error | ValidationError;
 
-export type ScenarioCreateMutation = {
-  __typename?: 'ScenarioCreateMutation';
-  scenario?: Maybe<ScenarioOrDiffOrError>;
+export type SensitivityAnalysis = {
+  __typename?: 'SensitivityAnalysis';
+  names: Array<Scalars['String']>;
+  percentiles: Array<Array<Scalars['Float']>>;
+  resultMinMax: Array<Array<Scalars['Float']>>;
+  title: Scalars['String'];
+  zeroPoint: Scalars['Float'];
 };
 
-export type ScenarioDeleteMutation = {
-  __typename?: 'ScenarioDeleteMutation';
-  result?: Maybe<UuidOrError>;
-};
-
-export type ScenarioMutation = {
-  __typename?: 'ScenarioMutation';
-  createScenario?: Maybe<ScenarioCreateMutation>;
-  updateScenario?: Maybe<ScenarioUpdateMutation>;
-  deleteScenario?: Maybe<ScenarioDeleteMutation>;
-  createNetback?: Maybe<CreateNetback>;
-  updateNetback?: Maybe<UpdateNetback>;
-  deleteNetback?: Maybe<DeleteNetback>;
-  createProductType?: Maybe<CreateProductType>;
-  updateProductType?: Maybe<UpdateProductType>;
-  deleteProductType?: Maybe<DeleteProductType>;
-  createProduct?: Maybe<CreateProduct>;
-  updateProduct?: Maybe<UpdateProduct>;
-  deleteProduct?: Maybe<DeleteProduct>;
-};
-
-export type ScenarioMutationCreateScenarioArgs = {
-  description?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-};
-
-export type ScenarioMutationUpdateScenarioArgs = {
-  description?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  productTypes?: Maybe<Array<Maybe<ProductTypeInput>>>;
-  scenarioId: Scalars['ID'];
-};
-
-export type ScenarioMutationDeleteScenarioArgs = {
-  scenarioId: Scalars['ID'];
-};
-
-export type ScenarioMutationCreateNetbackArgs = {
-  netbackName: Scalars['String'];
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ScenarioMutationUpdateNetbackArgs = {
-  netbackName?: Maybe<Scalars['String']>;
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['Float']>;
-};
-
-export type ScenarioMutationDeleteNetbackArgs = {
-  netbackName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ScenarioMutationCreateProductTypeArgs = {
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  productTypeName: Scalars['String'];
-  qualityAward?: Maybe<Scalars['Float']>;
-  qualityDiscount?: Maybe<Scalars['Float']>;
-  scenarioId: Scalars['ID'];
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ScenarioMutationUpdateProductTypeArgs = {
-  fareAllow?: Maybe<Scalars['Boolean']>;
-  productTypeId: Scalars['ID'];
-  productTypeName?: Maybe<Scalars['String']>;
-  qualityAward?: Maybe<Scalars['Float']>;
-  qualityDiscount?: Maybe<Scalars['Float']>;
-  scenarioId: Scalars['ID'];
-  yearEnd?: Maybe<Scalars['Int']>;
-  yearStart?: Maybe<Scalars['Int']>;
-};
-
-export type ScenarioMutationDeleteProductTypeArgs = {
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ScenarioMutationCreateProductArgs = {
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-};
-
-export type ScenarioMutationUpdateProductArgs = {
-  prices?: Maybe<Array<Maybe<AverageAnnualPriceTypeInput>>>;
-  productName?: Maybe<Scalars['String']>;
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-  units?: Maybe<Scalars['String']>;
-};
-
-export type ScenarioMutationDeleteProductArgs = {
-  productName: Scalars['String'];
-  productTypeId: Scalars['ID'];
-  scenarioId: Scalars['ID'];
-};
-
-export type ScenarioOrDiffOrError = ScenarioType | Error;
-
-/**
- * Шаг сценария.
- *
- *     Состоит из списка позиций - пар мероприятие-объект.
- */
-export type ScenarioStep = {
-  __typename?: 'ScenarioStep';
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  itemList?: Maybe<Array<Maybe<ScenarioStepItem>>>;
-};
-
-/**
- * Позиция шага сценария - пара объект-мероприятие.
- *
- *     Опционально содержит исходную группу объектов (в случае если объект был
- *     добавлен из группы) для определения актуальности позиции в случае динамической группы
- */
-export type ScenarioStepItem = {
-  __typename?: 'ScenarioStepItem';
-  object?: Maybe<DomainObjectInterface>;
-  objectGroup?: Maybe<Scalars['UUID']>;
-  vid?: Maybe<Scalars['ID']>;
-  code?: Maybe<Scalars['String']>;
-  activity?: Maybe<ProjectActivity>;
-  effectList?: Maybe<Array<Maybe<ActivityEffect>>>;
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepItemMutations = {
-  __typename?: 'ScenarioStepItemMutations';
-  /** Создание элемента шага сценария. */
-  create?: Maybe<CreateScenarioStepItem>;
-  /** Изменение элемента шага сценария. */
-  update?: Maybe<UpdateScenarioStepItem>;
-  /** Удаление элемента шага сценария. */
-  delete?: Maybe<DeleteScenarioStepItem>;
-  effects?: Maybe<ActivityEffectMutations>;
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepItemMutationsCreateArgs = {
-  activityVid: Scalars['UUID'];
-  objectGroupVid?: Maybe<Scalars['UUID']>;
-  objectVid?: Maybe<Scalars['UUID']>;
-  risk?: Maybe<Scalars['String']>;
-  stepVid: Scalars['UUID'];
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepItemMutationsUpdateArgs = {
-  activityVid?: Maybe<Scalars['UUID']>;
-  objectGroupVid?: Maybe<Scalars['UUID']>;
-  objectVid?: Maybe<Scalars['UUID']>;
-  risk?: Maybe<Scalars['String']>;
-  stepVid: Scalars['UUID'];
-  vid: Scalars['UUID'];
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepItemMutationsDeleteArgs = {
-  stepVid: Scalars['UUID'];
-  vid: Scalars['UUID'];
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepMutations = {
-  __typename?: 'ScenarioStepMutations';
-  /** Создание шага сценария. */
-  create?: Maybe<CreateScenarioStep>;
-  /** Обновление шага сценария. */
-  update?: Maybe<UpdateScenarioStep>;
-  /** Удаление шага сценария. */
-  delete?: Maybe<DeleteScenarioStep>;
-  items?: Maybe<ScenarioStepItemMutations>;
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepMutationsCreateArgs = {
-  activity?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
-  objectGroup?: Maybe<Scalars['UUID']>;
-  objects?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepMutationsUpdateArgs = {
-  activity?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
-  objectGroup?: Maybe<Scalars['UUID']>;
-  objects?: Maybe<Array<Maybe<Scalars['UUID']>>>;
-  vid: Scalars['UUID'];
-};
-
-/** Мутации для шагов сценария. */
-export type ScenarioStepMutationsDeleteArgs = {
-  vid: Scalars['UUID'];
-};
-
-/** Сценарий либо для описания стоимостей различных видов продукции по годам. */
-export type ScenarioType = {
-  __typename?: 'ScenarioType';
-  id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  /** Виды продукции */
-  productTypesList?: Maybe<Array<Maybe<ProductType>>>;
-  netback?: Maybe<Array<Maybe<NetbackPriceType>>>;
-};
-
-export type ScenarioUpdateMutation = {
-  __typename?: 'ScenarioUpdateMutation';
-  scenario?: Maybe<ScenarioOrDiffOrError>;
-};
-
-export type SetCapexExpenseYearValue = {
-  __typename?: 'SetCapexExpenseYearValue';
-  capexExpense?: Maybe<CapexExpenseOrDiffOrError>;
-  totalValueByYear?: Maybe<Array<Maybe<CapexYearValueType>>>;
-};
-
-export type SetMacroparameterYearValue = {
-  __typename?: 'SetMacroparameterYearValue';
-  macroparameter?: Maybe<MacroparameterOrDiffOrError>;
-};
-
-export type SetOpexAutoexport = {
-  __typename?: 'SetOpexAutoexport';
-  autoexport?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type SetOpexAutoexportExpenseYearValue = {
-  __typename?: 'SetOpexAutoexportExpenseYearValue';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type SetOpexCaseExpenseYearValue = {
-  __typename?: 'SetOpexCaseExpenseYearValue';
-  totalValueByYear?: Maybe<Array<Maybe<OpexYearValue>>>;
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type SetOpexMkos = {
-  __typename?: 'SetOpexMkos';
-  mkos?: Maybe<OpexExpenseGroupOrError>;
-};
-
-export type SetOpexMkosExpenseYearValue = {
-  __typename?: 'SetOpexMkosExpenseYearValue';
-  opexExpense?: Maybe<OpexExpenseOrError>;
-};
-
-export type SetOpexSdf = {
-  __typename?: 'SetOpexSdf';
-  opexSdf?: Maybe<OpexSdfOrError>;
+export type SensitivityAnalysisStatistics = {
+  __typename?: 'SensitivityAnalysisStatistics';
+  fluid?: Maybe<Scalars['String']>;
+  headers: Array<Header>;
+  rows: Array<Row>;
 };
 
 export enum SortType {
@@ -3353,19 +2268,28 @@ export enum SortTypeEnum {
   Desc = 'DESC',
 }
 
+/** Synchronize teos object with project object in resource_base. */
+export type SyncTeos = {
+  __typename?: 'SyncTeos';
+  projectTree?: Maybe<TeosStructureL>;
+  successful?: Maybe<Scalars['Boolean']>;
+};
+
 /** Ошибка данных таблицы с информацией о расположении строк или ячеек повлекших ошибку. */
 export type TableError = RbErrorInterface & {
   __typename?: 'TableError';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: RbErrorCodes;
-  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
-  message: Scalars['String'];
-  /** Имя таблицы, содержащей строки или ячейки, повлекшие ошибку */
-  tableName: TableNames;
-  /** Индекс строки таблицы, повлекшей ошибку */
-  row?: Maybe<Scalars['Int']>;
   /** Идентификатор сущности в колонке. */
   columnKey?: Maybe<Scalars['String']>;
+  /** Индекс концепции, к которой относится ошибка */
+  conceptionIdx?: Maybe<Scalars['Int']>;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
+  /** Индекс строки таблицы, повлекшей ошибку */
+  row?: Maybe<Scalars['Int']>;
+  /** Имя таблицы, содержащей строки или ячейки, повлекшие ошибку */
+  tableName: TableNames;
 };
 
 export type TableErrors = {
@@ -3375,110 +2299,117 @@ export type TableErrors = {
 
 /** Имена таблиц в структуре проекта. */
 export enum TableNames {
-  Conceptions = 'CONCEPTIONS',
-  DomainEntities = 'DOMAIN_ENTITIES',
   Attributes = 'ATTRIBUTES',
-  Risks = 'RISKS',
+  Conceptions = 'CONCEPTIONS',
   Correlations = 'CORRELATIONS',
+  DomainEntities = 'DOMAIN_ENTITIES',
+  Risks = 'RISKS',
+  Saturation = 'SATURATION',
 }
 
-export type TaxDnsProfileType = {
-  __typename?: 'TaxDnsProfileType';
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  caption?: Maybe<Scalars['String']>;
-  value?: Maybe<Array<Maybe<DnsProfileYearValueType>>>;
-  unit?: Maybe<Scalars['String']>;
+/** All mutations related to teos. */
+export type TeosMutations = {
+  __typename?: 'TeosMutations';
+  /** Synchronize teos object with project object in resource_base. */
+  syncTeos?: Maybe<SyncTeos>;
+  teosVariantItemMutations?: Maybe<TeosVariantItemMutations>;
 };
 
-export type TaxEnvironmentType = {
-  __typename?: 'TaxEnvironmentType';
-  yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
-  currentTaxMode?: Maybe<CurrentTaxMode>;
-  dns?: Maybe<DnsType>;
-  ndd?: Maybe<NddType>;
+/** All queries related to teos are here. */
+export type TeosQueries = {
+  __typename?: 'TeosQueries';
+  getProjectTree?: Maybe<TeosStructureL>;
 };
 
-export type UpdateActivityEffect = {
-  __typename?: 'UpdateActivityEffect';
-  result?: Maybe<ActivityEffect>;
+export type TeosStructureL = {
+  __typename?: 'TeosStructureL';
+  domainEntities: Array<Maybe<DomainEntityL>>;
+  domainObjects: Array<Maybe<DomainObjectL>>;
+  domainScenarios: Array<Maybe<DomainScenarioL>>;
 };
 
-export type UpdateCanvasNode = {
-  __typename?: 'UpdateCanvasNode';
-  result?: Maybe<CanvasNode>;
+export type TeosVariantItem = {
+  code: DomainScenarioEnum;
+  name: Scalars['String'];
+  parentVid: Scalars['UUID'];
+  vid?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateCapexGlobalValue = {
-  __typename?: 'UpdateCapexGlobalValue';
-  capexGlobalValue?: Maybe<CapexGlobalValueOrDiffOrError>;
+/** Mutations related to teos inner items objects. */
+export type TeosVariantItemMutations = {
+  __typename?: 'TeosVariantItemMutations';
+  /** Adds Variants to teos Domain Objects. */
+  addTeosVariantItem?: Maybe<VariantOperationResultOrError>;
+  /** Removes Variants from teos Domain Object. */
+  delTeosVariantItem?: Maybe<VariantOperationResultOrError>;
+  /** Updates Variants in teos Domain Objects. */
+  updateTeosVariantItem?: Maybe<VariantOperationResultOrError>;
+};
+
+/** Mutations related to teos inner items objects. */
+export type TeosVariantItemMutationsAddTeosVariantItemArgs = {
+  variantItem?: InputMaybe<TeosVariantItem>;
+};
+
+/** Mutations related to teos inner items objects. */
+export type TeosVariantItemMutationsDelTeosVariantItemArgs = {
+  variantItem?: InputMaybe<TeosVariantItem>;
+};
+
+/** Mutations related to teos inner items objects. */
+export type TeosVariantItemMutationsUpdateTeosVariantItemArgs = {
+  variantItem?: InputMaybe<TeosVariantItem>;
+};
+
+export type ThicknessHistogramVariantL = {
+  __typename?: 'ThicknessHistogramVariantL';
+  headers: Array<Maybe<HeaderL>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  rows: Array<Maybe<RowL>>;
+};
+
+export type UnexpectedVariantTypeError = {
+  __typename?: 'UnexpectedVariantTypeError';
+  errorMessage: Scalars['String'];
 };
 
 export type UpdateDomainGroupResult = {
   __typename?: 'UpdateDomainGroupResult';
-  ok?: Maybe<Scalars['Boolean']>;
-  name?: Maybe<Scalars['String']>;
-  vids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
   formula?: Maybe<Scalars['String']>;
-};
-
-export type UpdateNetback = {
-  __typename?: 'UpdateNetback';
-  netback?: Maybe<NetbackPriceOrDiffOrError>;
-};
-
-export type UpdateProduct = {
-  __typename?: 'UpdateProduct';
-  product?: Maybe<ProductOrDiffOrError>;
-};
-
-export type UpdateProductType = {
-  __typename?: 'UpdateProductType';
-  productType?: Maybe<ProductTypeOrDiffOrError>;
+  name?: Maybe<Scalars['String']>;
+  ok?: Maybe<Scalars['Boolean']>;
+  vids?: Maybe<Array<Maybe<Scalars['UUID']>>>;
 };
 
 /** Contains remote and local versions of  project if versions are not equal. */
 export type UpdateProjectInnerDiff = {
   __typename?: 'UpdateProjectInnerDiff';
-  remoteProject?: Maybe<ProjectInner>;
   message?: Maybe<Scalars['String']>;
+  remoteProject?: Maybe<ProjectInner>;
 };
 
-export type UpdateRiskValueResult = GCoSCalculationResult | DetailError;
-
-/** Обновление шага сценария. */
-export type UpdateScenarioStep = {
-  __typename?: 'UpdateScenarioStep';
-  result?: Maybe<ScenarioStep>;
-};
-
-/** Изменение элемента шага сценария. */
-export type UpdateScenarioStepItem = {
-  __typename?: 'UpdateScenarioStepItem';
-  result?: Maybe<ScenarioStepItem>;
-};
+export type UpdateRiskValueResult = DetailError | GCoSCalculationResult;
 
 export type User = {
   __typename?: 'User';
-  name?: Maybe<Scalars['String']>;
-  vid?: Maybe<Scalars['ID']>;
+  adId?: Maybe<Scalars['String']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
+  customSettings?: Maybe<UserCustomSettings>;
   editedAt?: Maybe<Scalars['DateTime']>;
-  login?: Maybe<Scalars['String']>;
+  favoriteProjects?: Maybe<Array<Maybe<Scalars['ID']>>>;
   firstName?: Maybe<Scalars['String']>;
+  groups?: Maybe<Array<Maybe<UserGroup>>>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
+  lastName?: Maybe<Scalars['String']>;
+  login?: Maybe<Scalars['String']>;
+  mail?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  organizationUnits?: Maybe<Array<Maybe<OrganizationUnit>>>;
   patronym?: Maybe<Scalars['String']>;
   principalName?: Maybe<Scalars['String']>;
-  mail?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  adId?: Maybe<Scalars['String']>;
-  role?: Maybe<Scalars['String']>;
-  favoriteProjects?: Maybe<Array<Maybe<Scalars['ID']>>>;
-  organizationUnits?: Maybe<Array<Maybe<OrganizationUnit>>>;
-  groups?: Maybe<Array<Maybe<UserGroup>>>;
-  customSettings?: Maybe<UserCustomSettings>;
+  vid?: Maybe<Scalars['ID']>;
 };
 
 export type UserCustomSettings = {
@@ -3488,69 +2419,69 @@ export type UserCustomSettings = {
 
 export type UserGroup = {
   __typename?: 'UserGroup';
-  vid?: Maybe<Scalars['ID']>;
+  adId?: Maybe<Scalars['String']>;
   code?: Maybe<Scalars['String']>;
-  isDeleted?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   editedAt?: Maybe<Scalars['DateTime']>;
+  isDeleted?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   project?: Maybe<Scalars['ID']>;
-  adId?: Maybe<Scalars['String']>;
+  vid?: Maybe<Scalars['ID']>;
 };
-
-export type UuidOrError = Result | Error;
 
 export type ValidationError = ErrorInterface & {
   __typename?: 'ValidationError';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: ErrorCodesEnum;
-  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
-  message: Scalars['String'];
   details?: Maybe<Scalars['String']>;
-  payload?: Maybe<Scalars['DictType']>;
   /** Массив ошибок валидации для отправленных полей мутации */
   items?: Maybe<Array<Maybe<ValidationErrorItemType>>>;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
+  payload?: Maybe<Scalars['DictType']>;
 };
 
 /** Validation error codes list. */
 export enum ValidationErrorCode {
+  /** ARRAY_IS_EMPTY */
+  ArrayIsEmpty = 'ARRAY_IS_EMPTY',
+  /** ARRAY_TOO_LONG */
+  ArrayTooLong = 'ARRAY_TOO_LONG',
+  /** ARRAY_TOO_SHORT */
+  ArrayTooShort = 'ARRAY_TOO_SHORT',
+  /** METHOD_IS_NOT_APPLICABLE */
+  MethodIsNotApplicable = 'METHOD_IS_NOT_APPLICABLE',
+  /** NOT_UNIQUE */
+  NotUnique = 'NOT_UNIQUE',
+  /** NUMBER_IS_NEGATIVE */
+  NumberIsNegative = 'NUMBER_IS_NEGATIVE',
   /** NUMBER_TOO_LARGE */
   NumberTooLarge = 'NUMBER_TOO_LARGE',
   /** NUMBER_TOO_LOW */
   NumberTooLow = 'NUMBER_TOO_LOW',
-  /** NUMBER_IS_NEGATIVE */
-  NumberIsNegative = 'NUMBER_IS_NEGATIVE',
+  /** OBJECT_KEY_NOT_FOUND */
+  ObjectKeyNotFound = 'OBJECT_KEY_NOT_FOUND',
+  /** STRING_DOES_NOT_MATCH_PATTERN */
+  StringDoesNotMatchPattern = 'STRING_DOES_NOT_MATCH_PATTERN',
   /** STRING_TOO_LONG */
   StringTooLong = 'STRING_TOO_LONG',
   /** STRING_TOO_SHORT */
   StringTooShort = 'STRING_TOO_SHORT',
-  /** STRING_DOES_NOT_MATCH_PATTERN */
-  StringDoesNotMatchPattern = 'STRING_DOES_NOT_MATCH_PATTERN',
-  /** ARRAY_IS_EMPTY */
-  ArrayIsEmpty = 'ARRAY_IS_EMPTY',
-  /** ARRAY_TOO_SHORT */
-  ArrayTooShort = 'ARRAY_TOO_SHORT',
-  /** ARRAY_TOO_LONG */
-  ArrayTooLong = 'ARRAY_TOO_LONG',
-  /** OBJECT_KEY_NOT_FOUND */
-  ObjectKeyNotFound = 'OBJECT_KEY_NOT_FOUND',
-  /** VALUE_IS_EMPTY */
-  ValueIsEmpty = 'VALUE_IS_EMPTY',
   /** VALUE_HAS_WRONG_TYPE */
   ValueHasWrongType = 'VALUE_HAS_WRONG_TYPE',
+  /** VALUE_IS_EMPTY */
+  ValueIsEmpty = 'VALUE_IS_EMPTY',
   /** VALUE_IS_INCORRECT */
   ValueIsIncorrect = 'VALUE_IS_INCORRECT',
-  /** NOT_UNIQUE */
-  NotUnique = 'NOT_UNIQUE',
 }
 
 export type ValidationErrorItemType = {
   __typename?: 'ValidationErrorItemType';
-  path?: Maybe<Array<Maybe<Scalars['String']>>>;
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
   code: ValidationErrorCode;
   /** Сообщение об ошибке валидации. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
+  path?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 /**
@@ -3559,47 +2490,188 @@ export type ValidationErrorItemType = {
  *     Todo:
  *     1. Develop valudation rule syntax
  *     2. Realize validate value by valudation rules
+ *
  */
 export type ValidationRules = {
   __typename?: 'ValidationRules';
   rules?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type VariantOperationResult = {
+  __typename?: 'VariantOperationResult';
+  vid: Scalars['UUID'];
+};
+
+export type VariantOperationResultOrError =
+  | NoDomainObjectWithSuchIdError
+  | NoTeosObjectError
+  | NoVariantWithSuchVid
+  | UnexpectedVariantTypeError
+  | VariantOperationResult;
+
 export type Visible = {
   __typename?: 'Visible';
+  /** Отображения/Скрытие уровня иерархии в расчетах */
+  calc: Scalars['Boolean'];
   /** Отображения/Скрытие уровня иерархии в таблице */
   table: Scalars['Boolean'];
   /** Отображения/Скрытие уровня иерархии в дереве */
   tree: Scalars['Boolean'];
-  /** Отображения/Скрытие уровня иерархии в расчетах */
-  calc: Scalars['Boolean'];
 };
 
 export type VisibleInput = {
+  /** Отображения/Скрытие уровня иерархии в расчетах */
+  calc: Scalars['Boolean'];
   /** Отображения/Скрытие уровня иерархии в таблице */
   table: Scalars['Boolean'];
   /** Отображения/Скрытие уровня иерархии в дереве */
   tree: Scalars['Boolean'];
-  /** Отображения/Скрытие уровня иерархии в расчетах */
+};
+
+export type VisibleResult = {
+  __typename?: 'VisibleResult';
   calc: Scalars['Boolean'];
+  table: Scalars['Boolean'];
+  tree: Scalars['Boolean'];
 };
 
 export type VisibleValue = {
   __typename?: 'VisibleValue';
   /** Ранг процентиля */
-  rank: Scalars['Float'];
+  rank?: Maybe<Scalars['Float']>;
   /** Процентиль */
   value?: Maybe<Scalars['Float']>;
 };
 
 export type VisibleValueResult =
-  | VisibleValue
   | CommonErrors
-  | DistributionDefinitionErrors;
+  | DistributionDefinitionErrors
+  | VisibleValue;
 
-export type YearValue = {
-  __typename?: 'YearValue';
-  yearValue?: Maybe<Scalars['Float']>;
+export type GetProjectTreeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetProjectTreeQuery = {
+  __typename?: 'Query';
+  project?: {
+    __typename?: 'ProjectInner';
+    teosQueries?: {
+      __typename?: 'TeosQueries';
+      getProjectTree?: {
+        __typename?: 'TeosStructureL';
+        domainEntities: Array<{
+          __typename?: 'DomainEntityL';
+          code: string;
+          name: string;
+        } | null>;
+        domainObjects: Array<{
+          __typename?: 'DomainObjectL';
+          id: any;
+          domainObjectPath: Array<{
+            __typename?: 'DomainObjectPathL';
+            code: string;
+            value: string;
+          } | null>;
+          geologicalScenarios: Array<{
+            __typename?: 'GeoLogicalScenarioVariantL';
+            id: any;
+            name: string;
+          } | null>;
+          developmentScenarios: Array<{
+            __typename?: 'DevelopmentScenarioVariantL';
+            id: any;
+            name: string;
+          } | null>;
+          thicknessHistograms: Array<{
+            __typename?: 'ThicknessHistogramVariantL';
+            id: any;
+            name: string;
+          } | null>;
+        } | null>;
+      } | null;
+    } | null;
+  } | null;
 };
 
-export type YearValueOrError = YearValue | Error;
+export const GetProjectTreeDocument = gql`
+  query getProjectTree {
+    project {
+      teosQueries {
+        getProjectTree {
+          domainEntities {
+            code
+            name
+          }
+          domainObjects {
+            id
+            domainObjectPath {
+              code
+              value
+            }
+            geologicalScenarios {
+              id
+              name
+            }
+            developmentScenarios {
+              id
+              name
+            }
+            thicknessHistograms {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetProjectTreeQuery__
+ *
+ * To run a query within a React component, call `useGetProjectTreeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectTreeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectTreeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetProjectTreeQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetProjectTreeQuery,
+    GetProjectTreeQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetProjectTreeQuery, GetProjectTreeQueryVariables>(
+    GetProjectTreeDocument,
+    options,
+  );
+}
+export function useGetProjectTreeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetProjectTreeQuery,
+    GetProjectTreeQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetProjectTreeQuery, GetProjectTreeQueryVariables>(
+    GetProjectTreeDocument,
+    options,
+  );
+}
+export type GetProjectTreeQueryHookResult = ReturnType<
+  typeof useGetProjectTreeQuery
+>;
+export type GetProjectTreeLazyQueryHookResult = ReturnType<
+  typeof useGetProjectTreeLazyQuery
+>;
+export type GetProjectTreeQueryResult = Apollo.QueryResult<
+  GetProjectTreeQuery,
+  GetProjectTreeQueryVariables
+>;

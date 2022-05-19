@@ -8,3 +8,5 @@ export const selectCurrentGeoObjectTitle = (state: RootState) =>
 
 export const selectGeoObjectScenarios = (state: RootState) =>
   state.tree.geoObjectScenarios;
+
+export const selectTreeData = (state: RootState) => state.tree.projectTree;

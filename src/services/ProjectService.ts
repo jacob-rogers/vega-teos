@@ -5,12 +5,11 @@ import {
 } from '@apollo/client';
 import { FetchPolicy } from '@apollo/client/core/watchQueryOptions';
 import {
-  DomainObject,
   ProjectInner,
+  ProjectStructureResult,
   Query,
-  ResultProjectStructure,
 } from '@app/generated/graphql';
-import { DEFAULT_QUERY, GET_PROJECT_TREE } from '@app/graphql/queries/Queries';
+import { DEFAULT_QUERY } from '@app/graphql/queries/DefaultQueries';
 import { getGraphqlUri } from '@app/helpers/ServiceHelper';
 import { ProjectServiceProps } from '@app/interfaces/ProjectInterface';
 import { CurrentProject, Identity, Project } from '@app/types';
@@ -74,7 +73,7 @@ export class ProjectService {
     return this;
   }
 
-  async getResourceBaseData(): Promise<ResultProjectStructure | null> {
+  async getResourceBaseData(): Promise<ProjectStructureResult> {
     const { data: responseData } = await this.client
       .watchQuery<Query>({
         query: DEFAULT_QUERY,
@@ -86,27 +85,8 @@ export class ProjectService {
       .result();
 
     return getOr(
-      null,
+      { attributes: [], domainEntities: [], domainObjects: [] },
       ['project', 'resourceBase', 'result', 'resultTable', 'template'],
-      responseData,
-    );
-  }
-
-  async getProjectTree(): Promise<{ domainObjects: DomainObject[] } | null> {
-    const { data: responseData } = await this.client
-      .watchQuery<Query>({
-        query: GET_PROJECT_TREE,
-        context: {
-          uri: getGraphqlUri(this.projectId),
-        },
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-      })
-      .result();
-
-    return getOr(
-      null,
-      ['project', 'teosQueries', 'getProjectTree'],
       responseData,
     );
   }
