@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ContextMenuId } from '@app/constants/TableConstants';
-import { selectTableLoading } from '@app/store/loader/LoaderSelector';
+import { addEmptyRow } from '@app/helpers/TableHelper';
+import { selectTableLoading } from '@app/store/loader/LoaderSelectors';
+import { TABLE_DATA_MOCK } from '@app/store/table/__mocks__/tableData';
+import { TableActions } from '@app/store/table/TableActions';
 import { selectTableData } from '@app/store/table/TableSelectors';
 import { TreeActions } from '@app/store/tree/TreeActions';
 import {
   selectCurrentGeoObjectTitle,
   selectCurrentScenarioTitle,
 } from '@app/store/tree/TreeSelectors';
+import { Button } from '@consta/uikit/Button';
 import { Loader } from '@consta/uikit/Loader';
+import { cnMixSpace } from '@consta/uikit/MixSpace';
 import { Text } from '@consta/uikit/Text';
 import { GridCollection, RowTypes, VegaTable } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
@@ -72,6 +77,10 @@ export const TeosTable: React.FC = () => {
     setIsContextMenuOpen(true);
   };
 
+  const handleAddRow = (): void => {
+    dispatch(TableActions.setTableData(addEmptyRow(TABLE_DATA_MOCK)));
+  };
+
   return (
     <div className={cn()}>
       {currentGeoObjectTitle ? (
@@ -83,13 +92,23 @@ export const TeosTable: React.FC = () => {
               {tableDataIsLoading ? (
                 <Loader size="m" data-testid="table-data-loader" />
               ) : (
-                <VegaTable
-                  grid={tableData}
-                  gridRef={gridRef}
-                  rowHeight={getRowHeight}
-                  handleHeaderContextClick={handleHeaderContextClick}
-                  handleRowContextClick={handleRowContextClick}
-                />
+                <>
+                  <VegaTable
+                    grid={tableData}
+                    gridRef={gridRef}
+                    rowHeight={getRowHeight}
+                    handleHeaderContextClick={handleHeaderContextClick}
+                    handleRowContextClick={handleRowContextClick}
+                  />
+                  <div className={cnMixSpace({ mT: 'm' })}>
+                    <Button
+                      view="secondary"
+                      label="+ Добавить строку"
+                      width="full"
+                      onClick={handleAddRow}
+                    />
+                  </div>
+                </>
               )}
               <TableContextMenu
                 id={contextMenuId}
