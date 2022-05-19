@@ -122,11 +122,11 @@ export class ProjectService {
       })
       .result();
 
-      return getOr(
-        null,
-        ['project', 'teosQueries', 'getProjectTree'],
-        responseData,
-      );
+    return getOr(
+      null,
+      ['project', 'teosQueries', 'getProjectTree'],
+      responseData,
+    );
   }
 }
 

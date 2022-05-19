@@ -1,6 +1,6 @@
 import { TreeItem } from '@gpn-prototypes/vega-ui';
 import arrayToTree from 'array-to-tree';
-import { v4 as uuid } from 'uuid';
+import _ from 'lodash';
 
 import { ResultProjectTreeStructure } from '../generated/graphql';
 
@@ -81,75 +81,68 @@ export interface TreeItemData {
   id: string;
   name: string;
   nodeList: TreeItemData[];
-};
+}
 
 export interface DomainObjectProfileItem {
   name: string;
 }
 
-const domainObjectProfileItems = [
-  {
-    name: 'Геологические сценарии',
-  },
-  {
-    name: 'Сценарии разработки',
-  },
-  {
-    name: 'Гистограммы толщин',
-  },
-];
-
 export const getNodeTreeFromAPIData = (
   data: ResultProjectTreeStructure,
-  projectName,
-): TreeItem<TreeItemData>[] => {
+): TreeItem<{
+  parentId: string | undefined;
+  __typename?: 'ResultTeosDomainObjectPath' | undefined;
+  code: string;
+  value?: string | undefined;
+}>[] => {
   const { domainObjects } = data;
 
-  const nodeList: TreeItem<TreeItemData>[] = domainObjects
-    .filter((domainObject) => domainObject.domainObjectPath.some((path) => path !== null))
-    .map((domainObject) => {
-      const [ rootDomainObject, ...restDomainObjectPath ] = domainObject.domainObjectPath;
-      const rootDomainObjectId = domainObject.id || uuid();
+  const nodeList = domainObjects.filter((domainObject) =>
+    domainObject.domainObjectPath.some((path) => path !== null),
+  );
 
+  const flatDO = nodeList
+    .map((domainObject) => domainObject.domainObjectPath)
+    .flat(1);
+
+  const finalDO = _.uniqWith(
+    flatDO.map((fdoItem, idx) => {
       return {
-        id: rootDomainObjectId,
-        name: rootDomainObject.value || '',
-        parentId: 'root',
-        nodeList: arrayToTree([
-          ...restDomainObjectPath.map((path, idx) => ({
-            id: path.code,
-            name: path.value || '',
-            parentId: idx === 0 ? rootDomainObjectId : restDomainObjectPath[idx-1].code,
-            nodeList: [],
-          })),
-          ...domainObjectProfileItems.map((profileItem: DomainObjectProfileItem) => ({
-            id: uuid(),
-            name: profileItem.name,
-            parentId: restDomainObjectPath[restDomainObjectPath.length-1].code,
-            nodeList: [],
-          })),
-        ], {
-          childrenProperty: 'nodeList',
-          customID: 'id',
-          parentProperty: 'parentId',
-        }),
+        ...fdoItem,
+        name: fdoItem.value,
+        parentId: fdoItem.code === 'AREA' ? undefined : flatDO[idx - 1].value,
+        nodeList: [],
       };
-    });
+    }),
+    _.isEqual,
+  );
 
-  return nodeList;
-}
+  const finalDOTree = arrayToTree(finalDO, {
+    childrenProperty: 'nodeList',
+    customID: 'value',
+    parentProperty: 'parentId',
+  });
 
-export const searchNode = (tree: TreeItem[], targetId: string): TreeItem | undefined => {
+  return finalDOTree as unknown as any;
+};
+
+export const searchNode = (
+  tree: TreeItem[],
+  targetId: string,
+): TreeItem | undefined => {
+  let found;
+  let foundIdx = targetId;
+
   function search(item) {
     if (item.id === foundIdx) {
       found = item;
+
       return true;
     }
 
     return Array.isArray(item.nodeList) && item.nodeList.some(search);
   }
 
-  let found, foundIdx = targetId;
   found = { id: '0', name: '' };
   tree.some(search);
 

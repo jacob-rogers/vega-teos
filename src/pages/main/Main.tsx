@@ -33,7 +33,7 @@ const MainPage: React.FC = () => {
           aria-label="tree"
           initialSize="224px"
           min="24px"
-          max="300px"
+          max="360px"
         >
           <Tree isOpen={isShownTree} ref={treeEditorRef} />
         </SplitPanes.Pane>

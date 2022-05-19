@@ -1,7 +1,8 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-import actions from './treeActions';
 import { TreeState } from '../StoreTypes';
+
+import actions from './TreeActions';
 
 const treeInitialState: TreeState = {
   parentNode: {
@@ -12,6 +13,10 @@ const treeInitialState: TreeState = {
 };
 
 const treeReducer = reducerWithInitialState<TreeState>(treeInitialState)
+  .case(actions.initProjectTree, (state, payload) => ({
+    ...state,
+    projectTree: payload,
+  }))
   .case(actions.setProjectTree, (state, payload) => ({
     ...state,
     projectTree: payload,

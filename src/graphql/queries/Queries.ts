@@ -73,7 +73,7 @@ export const GET_PROJECT_TREE = gql`
       teosQueries {
         getProjectTree {
           domainEntities {
-            code,
+            code
             name
           }
           # TODO: Get this prop back when backend changes be actualized
@@ -82,21 +82,21 @@ export const GET_PROJECT_TREE = gql`
           #   name
           # }
           domainObjects {
-            id,
+            id
             domainObjectPath {
-              code,
+              code
               value
             }
             geologicalScenarios {
-              id,
+              id
               name
             }
             developmentScenarios {
-              id,
+              id
               name
             }
             thicknessHistograms {
-              id,
+              id
               name
             }
           }

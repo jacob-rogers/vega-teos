@@ -13,11 +13,12 @@ export const projectStoreInitialState: ProjectState = {
   name: '',
 };
 
-const reducer = reducerWithInitialState<ProjectState>(projectStoreInitialState)
-  .case(actions.updateProjectName, (state, payload) => ({
-    ...state,
-    name: payload,
-  }));
+const reducer = reducerWithInitialState<ProjectState>(
+  projectStoreInitialState,
+).case(actions.updateProjectName, (state, payload) => ({
+  ...state,
+  name: payload,
+}));
 
 export default {
   reducer,

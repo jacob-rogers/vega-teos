@@ -26,6 +26,6 @@
   }
 }
 
-.VegaTree__ItemName .label-selected {
+.VegaTree__NavigationItem_Selected {
   font-weight: bold;
 }

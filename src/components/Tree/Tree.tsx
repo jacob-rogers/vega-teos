@@ -9,209 +9,13 @@ import {
   searchNode,
   TreeItemData,
 } from '../../helpers/TreeHelper';
-import ProjectService from '../../services/ProjectService';
-import { RootState, TreeFilter, TreeFilter } from '../../store/StoreTypes';
-import { TableActions } from '../../store/table/TableActions';
+import projectService from '../../services/ProjectService';
+import { RootState, TreeFilter } from '../../store/StoreTypes';
 import TreeActions from '../../store/Tree/TreeActions';
-import TreeActions from '../../store/tree/TreeActions';
 
 import './Tree.css';
 
 const cnTree = block('Tree');
-
-/* Mocked tree items data */
-const rootProps: TreeItem[] = [
-  {
-    name: 'Участок 1',
-    isDraggable: false,
-    isDropZone: false,
-    id: '1',
-    nodeList: [
-      {
-        name: 'Поднятие 44-23',
-        id: '2',
-        parentId: '1',
-        isDraggable: false,
-        nodeList: [
-          {
-            name: 'Залежь - 78',
-            id: '10',
-            parentId: '2',
-            nodeList: [
-              {
-                name: 'Ловушка 100',
-                isDropZone: false,
-                id: '21',
-                nodeList: [
-                  {
-                    name: 'Еще что-нибудь',
-                    id: '12',
-                    isDropZone: false,
-                    isDraggable: false,
-                    parentId: '21',
-                    nodeList: [],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'Залежь - 79',
-            id: '30',
-            parentId: '2',
-            nodeList: [
-              {
-                name: 'Ловушка 101',
-                id: '17',
-                isDropZone: false,
-                parentId: '30',
-                nodeList: [],
-              },
-            ],
-          },
-          {
-            name: 'Залежь - 56',
-            id: '11',
-            parentId: '2',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 11',
-            id: '20',
-            parentId: '2',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 1',
-            id: '9',
-            parentId: '2',
-            nodeList: [],
-          },
-        ],
-      },
-      {
-        name: 'Поднятие 55-100',
-        id: '3',
-        parentId: '1',
-        isDraggable: false,
-        nodeList: [
-          {
-            name: 'Залежь - 78',
-            id: '7',
-            parentId: '3',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 79',
-            id: '77',
-            parentId: '3',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 56',
-            id: '24',
-            parentId: '3',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 11',
-            id: '25',
-            parentId: '3',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 1',
-            id: '26',
-            parentId: '3',
-            nodeList: [],
-          },
-        ],
-      },
-      {
-        name: 'Поднятие 23-32',
-        isDraggable: false,
-        id: '4',
-        parentId: '1',
-        nodeList: [
-          {
-            name: 'Залежь - 44',
-            id: '27',
-            parentId: '4',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 79',
-            id: '31',
-            parentId: '4',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 45',
-            id: '32',
-            parentId: '4',
-            nodeList: [],
-          },
-          {
-            name: 'Залежь - 46',
-            id: '33',
-            parentId: '4',
-            nodeList: [
-              {
-                name: 'Ловушка - 1',
-                isDropZone: false,
-                id: '41',
-                parentId: '33',
-                nodeList: [
-                  {
-                    name: 'Данные по Ловушка - 1',
-                    isDropZone: false,
-                    id: '34',
-                    parentId: '41',
-                    nodeList: [],
-                  },
-                ],
-              },
-              {
-                name: 'Ловушка - 2',
-                isDropZone: false,
-                id: '43',
-                parentId: '33',
-                nodeList: [],
-              },
-              {
-                name: 'Ловушка - 3',
-                isDropZone: false,
-                id: '44',
-                parentId: '33',
-                nodeList: [],
-              },
-              {
-                name: 'Ловушка - 4',
-                isDropZone: false,
-                id: '45',
-                parentId: '33',
-                nodeList: [],
-              },
-              {
-                name: 'Ловушка - 5',
-                isDropZone: false,
-                id: '46',
-                parentId: '33',
-                nodeList: [],
-              },
-            ],
-          },
-          {
-            name: 'Залежь - 1',
-            id: '47',
-            parentId: '4',
-            nodeList: [],
-          },
-        ],
-      },
-    ],
-  },
-];
 
 interface StructureTreeEditorProps {
   isOpen: boolean;
@@ -236,31 +40,33 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
       [dispatch],
     );
 
-    const setProjectTree = useCallback(
+    const initProjectTree = useCallback(
       (data: TreeItem<TreeItemData>[]) => {
-        dispatch(TreeActions.setProjectTree(data));
+        dispatch(TreeActions.initProjectTree(data));
       },
       [dispatch],
     );
 
     useEffect(() => {
       async function getProjectTree() {
-        const data = await ProjectService.getProjectTree();
+        const data = await projectService.getProjectTree();
 
         if (data) {
           const nodes = getNodeTreeFromAPIData(data);
 
-          setProjectTree(nodes);
+          initProjectTree(nodes);
         }
       }
       getProjectTree();
-    }, []);
+    }, [initProjectTree]);
+
+    const sourceTree = useSelector(({ tree }: RootState) => tree.projectTree);
 
     /** Methods */
     const onSelect = (selectedItems: TargetData[]) => {
       console.log('selectedItems', selectedItems);
       if (selectedItems.length) {
-        const parentNode = searchNode(rootProps, selectedItems[0].id);
+        const parentNode = searchNode(sourceTree, selectedItems[0].id);
 
         if (parentNode) {
           setSelectedLeaf({
@@ -297,6 +103,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
     return (
       <div className={cnTree()} ref={ref}>
         <Text
+          // eslint-disable-next-line newline-per-chained-call
           className={cnTree('Placeholder').state({ open: isOpen }).toString()}
           size="xs"
           view="ghost"
@@ -310,7 +117,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
         />
         <div className={cnTree('Content').state({ open: isOpen })}>
           <Tree
-            nodeList={tree}
+            nodeList={sourceTree}
             isDndEnable={false}
             isContextMenuEnable={false}
             onSelectItem={onSelect}
