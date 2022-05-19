@@ -6,6 +6,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: '4b4b4bf6-0437-43ab-8854-d3c10510151e',
       name: 'Сценарий',
       type: ColumnTypes.None,
+      width: 125,
       visible: {
         table: true,
       },
@@ -14,6 +15,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'MIXTURE_AREA',
       name: 'F, тыс. м²',
       type: ColumnTypes.Number,
+      width: 125,
       visible: {
         table: true,
       },
@@ -22,6 +24,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'OIL_POOL_NET_THICKNESS',
       name: 'H эфф.нн, м',
       type: ColumnTypes.Number,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -30,6 +33,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'OIL_FORMATION_POROSITY_RATIO',
       name: 'Кп, д. ед.',
       type: ColumnTypes.Number,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -38,6 +42,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'FORMATION_OIL_SATURATION_FACTOR',
       name: 'Кн, д. ед.',
       type: ColumnTypes.Number,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -46,6 +51,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'DENSITY',
       name: 'Плотность, г/см³',
       type: ColumnTypes.Number,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -54,6 +60,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: 'd3e58c1c-c582-4cc9-89fc-f67193dd9e85',
       name: 'Пересч. коэф., д.ед.',
       type: ColumnTypes.None,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -62,6 +69,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: '2544f6ae-5950-45f5-b81e-197ae6f1765d',
       name: 'GCos',
       type: ColumnTypes.None,
+      minWidth: 125,
       visible: {
         table: true,
       },
@@ -70,6 +78,7 @@ export const TABLE_DATA_MOCK: GridCollection = {
       key: '99fd19b1-da64-41cb-9fd1-9d8c8311ca22',
       name: 'НГЗ/НГР, тыс.т.',
       type: ColumnTypes.None,
+      minWidth: 125,
       visible: {
         table: true,
       },

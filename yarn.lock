@@ -1348,10 +1348,10 @@
     webpack-bundle-analyzer "^4.5.0"
     y18n "^5.0.8"
 
-"@gpn-prototypes/vega-ui@^4.0.11":
-  version "4.0.11"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.11/d1fb9d8e4cc0e7893c030bb15a7b42dc7b0ace6e8a3dadfcb37c6eba8433ab98#d2cd0104e3aaede8eb7c706495ae6f9877e456de"
-  integrity sha512-B4bB80PVG74Nxj6MoR6PV7NwevYdwXl5vhp3g/x4hKZkNrBiR005B6Tal89i8qPWQcyAmplArmHtzPerz/aPpg==
+"@gpn-prototypes/vega-ui@^4.0.13":
+  version "4.0.13"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/4.0.13/0d0545cb47f81a2d61921e40bc19feaedd1c7feaa39291e63a31e633644b3b8b#2aadc312935205b8fbaba3c9f0ce1ce6d9eb8da1"
+  integrity sha512-JoRWQai3zRrAJXxCdPCJoJCrKWr+Ucqu09VCmtuq7hlGVj/ixLtVq1av50gX0qf3XNJXLoq3uM7bf5CzgH3CQg==
   dependencies:
     "@consta/uikit" "^3.13.0"
     "@emotion/babel-preset-css-prop" "^10.0.27"
