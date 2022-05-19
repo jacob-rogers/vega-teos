@@ -31,8 +31,8 @@ const MainPage: React.FC = () => {
       <SplitPanes split="vertical" onResize={handleResize}>
         <SplitPanes.Pane
           aria-label="tree"
-          initialSize="224px"
-          min="24px"
+          initialSize={isShownTree ? '224px' : '36px'}
+          min="36px"
           max="360px"
         >
           <Tree isOpen={isShownTree} ref={treeEditorRef} />

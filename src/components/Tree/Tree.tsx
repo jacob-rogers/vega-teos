@@ -1,17 +1,15 @@
 import React, { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getNodeTree, searchNode, TreeItemData } from '@app/helpers/TreeHelper';
+import projectService from '@app/services/ProjectService';
+import { RootState } from '@app/store/StoreTypes';
+import { TableActions } from '@app/store/table/TableActions';
+import { TreeActions } from '@app/store/tree/TreeActions';
+import { TreeFilter } from '@app/types/TreeTypes';
+import { Button } from '@consta/uikit/Button';
 import { Text } from '@consta/uikit/Text';
 import { TargetData, Tree, TreeItem } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
-
-import {
-  getNodeTreeFromAPIData,
-  searchNode,
-  TreeItemData,
-} from '../../helpers/TreeHelper';
-import projectService from '../../services/ProjectService';
-import { RootState, TreeFilter } from '../../store/StoreTypes';
-import TreeActions from '../../store/Tree/TreeActions';
 
 import './Tree.css';
 
@@ -35,7 +33,7 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
 
     const setSelectedLeaf = useCallback(
       (treeFilter: TreeFilter) => {
-        dispatch(TreeActions.setSelectedResource(treeFilter));
+        dispatch(TreeActions.setCurrentGeoObject({ title: treeFilter.label }));
       },
       [dispatch],
     );
@@ -52,9 +50,9 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
         const data = await projectService.getProjectTree();
 
         if (data) {
-          const nodes = getNodeTreeFromAPIData(data);
+          const nodes = getNodeTree(data);
 
-          initProjectTree(nodes);
+          initProjectTree(nodes as TreeItem<TreeItemData>[]);
         }
       }
       getProjectTree();
@@ -64,7 +62,6 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
 
     /** Methods */
     const onSelect = (selectedItems: TargetData[]) => {
-      console.log('selectedItems', selectedItems);
       if (selectedItems.length) {
         const parentNode = searchNode(sourceTree, selectedItems[0].id);
 
@@ -80,8 +77,6 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
         resetState();
       }
     };
-
-    const tree = useSelector(({ tree }: RootState) => tree.projectTree);
 
     const handleSetGeoScenario = () => {
       dispatch(
@@ -108,13 +103,15 @@ export default React.forwardRef<HTMLDivElement, StructureTreeEditorProps>(
           size="xs"
           view="ghost"
         >
-          Дерево проекта
+          Структура проекта
         </Text>
-        <Button
-          label="Выбрать сценарий"
-          onClick={handleSetGeoScenario}
-          size="xs"
-        />
+        {isOpen && (
+          <Button
+            label="Выбрать сценарий"
+            onClick={handleSetGeoScenario}
+            size="xs"
+          />
+        )}
         <div className={cnTree('Content').state({ open: isOpen })}>
           <Tree
             nodeList={sourceTree}

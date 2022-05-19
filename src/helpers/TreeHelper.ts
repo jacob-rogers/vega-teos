@@ -1,8 +1,8 @@
+import { DomainObject } from '@app/generated/graphql';
 import { TreeItem } from '@gpn-prototypes/vega-ui';
 import arrayToTree from 'array-to-tree';
 import _ from 'lodash';
-
-import { ResultProjectTreeStructure } from '../generated/graphql';
+import { v4 as uuid } from 'uuid';
 
 export const getNewTree = (
   nodes: TreeItem[],
@@ -80,6 +80,7 @@ export const getNewTree = (
 export interface TreeItemData {
   id: string;
   name: string;
+  parentId?: string;
   nodeList: TreeItemData[];
 }
 
@@ -87,43 +88,63 @@ export interface DomainObjectProfileItem {
   name: string;
 }
 
-export const getNodeTreeFromAPIData = (
-  data: ResultProjectTreeStructure,
-): TreeItem<{
-  parentId: string | undefined;
-  __typename?: 'ResultTeosDomainObjectPath' | undefined;
-  code: string;
-  value?: string | undefined;
-}>[] => {
+export const getNodeTree = (data: { domainObjects: DomainObject[] }) => {
   const { domainObjects } = data;
 
-  const nodeList = domainObjects.filter((domainObject) =>
+  const domainObjectsWithRealPaths = domainObjects.filter((domainObject) =>
     domainObject.domainObjectPath.some((path) => path !== null),
   );
 
-  const flatDO = nodeList
+  const domainObjectsFlattened = domainObjectsWithRealPaths
     .map((domainObject) => domainObject.domainObjectPath)
     .flat(1);
 
-  const finalDO = _.uniqWith(
-    flatDO.map((fdoItem, idx) => {
+  const treeNodesList = _.uniqWith(
+    domainObjectsFlattened.map((fdoItem, idx) => {
+      const vid = fdoItem.code === 'MINE' ? uuid() : fdoItem.value;
+
       return {
-        ...fdoItem,
-        name: fdoItem.value,
-        parentId: fdoItem.code === 'AREA' ? undefined : flatDO[idx - 1].value,
-        nodeList: [],
+        id: vid,
+        name: fdoItem.value || '',
+        parentId:
+          fdoItem.code === 'AREA'
+            ? undefined
+            : domainObjectsFlattened[idx - 1].value,
+        nodeList:
+          fdoItem.code === 'MINE'
+            ? [
+                {
+                  id: uuid(),
+                  name: 'Геологические сценарии',
+                  parentId: vid,
+                  nodeList: [],
+                },
+                {
+                  id: uuid(),
+                  name: 'Cценарии разработки',
+                  parentId: vid,
+                  nodeList: [],
+                },
+                {
+                  id: uuid(),
+                  name: 'Гистограммы толщин',
+                  parentId: vid,
+                  nodeList: [],
+                },
+              ]
+            : [],
       };
     }),
     _.isEqual,
   );
 
-  const finalDOTree = arrayToTree(finalDO, {
+  const resultTree = arrayToTree(treeNodesList, {
     childrenProperty: 'nodeList',
-    customID: 'value',
+    customID: 'id',
     parentProperty: 'parentId',
   });
 
-  return finalDOTree as unknown as any;
+  return resultTree;
 };
 
 export const searchNode = (
