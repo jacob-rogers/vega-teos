@@ -1,14 +1,19 @@
+import { DomainScenarioEnum } from '@app/generated/graphql';
+
 export type Attributes = {
   object: GeoObject;
   scenario: GeoScenario;
 };
 
 export type GeoScenario = {
-  title: string;
+  name: string;
+  vid: string;
 };
 
 export type GeoObject = {
-  title: string;
+  name: string;
+  code: DomainScenarioEnum;
+  parentVid: string;
 };
 
 export type TreeFilter = {

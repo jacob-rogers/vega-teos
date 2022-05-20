@@ -21,3 +21,13 @@ export const selectTreeLoaded = createSelector(
   (state: RootState) => state.loader.loaded.tree,
   (isLoaded) => isLoaded,
 );
+
+export const selectUpdateVariantLoading = createSelector(
+  (state: RootState) => state.loader.loading.updateVariant,
+  (isLoading) => isLoading,
+);
+
+export const selectUpdateVariantLoaded = createSelector(
+  (state: RootState) => state.loader.loaded.updateVariant,
+  (isLoaded) => isLoaded,
+);

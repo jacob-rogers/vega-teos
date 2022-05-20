@@ -49,7 +49,7 @@ export class TreeService {
           uri: getGraphqlUri(this.projectId),
         },
         fetchPolicy: 'no-cache',
-        // errorPolicy: 'ignore',
+        errorPolicy: 'ignore',
       })
       .result();
 

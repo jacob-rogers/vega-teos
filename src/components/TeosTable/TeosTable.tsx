@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ContextMenuId } from '@app/constants/TableConstants';
 import { addEmptyRow } from '@app/helpers/TableHelper';
@@ -6,10 +6,9 @@ import { selectTableLoading } from '@app/store/loader/LoaderSelectors';
 import { TABLE_DATA_MOCK } from '@app/store/table/__mocks__/tableData';
 import { TableActions } from '@app/store/table/TableActions';
 import { selectTableData } from '@app/store/table/TableSelectors';
-import { TreeActions } from '@app/store/tree/TreeActions';
 import {
-  selectCurrentGeoObjectTitle,
-  selectCurrentScenarioTitle,
+  selectCurrentTreeItemName,
+  selectCurrentVariant,
 } from '@app/store/tree/TreeSelectors';
 import { Button } from '@consta/uikit/Button';
 import { Loader } from '@consta/uikit/Loader';
@@ -19,8 +18,8 @@ import { GridCollection, RowTypes, VegaTable } from '@gpn-prototypes/vega-ui';
 import { block } from 'bem-cn';
 
 import { GeoObjectTitle } from './GeoObjectTitle/GeoObjectTitle';
-import { ScenarioTitle } from './ScenarioTitle/ScenarioTitle';
 import TableContextMenu from './TableContextMenu/TableContextMenu';
+import { VariantName } from './VariantName/VariantName';
 
 import './TeosTable.css';
 
@@ -32,8 +31,8 @@ const DELIMETER_ROW_HEIGHT = 24;
 export const TeosTable: React.FC = () => {
   /** Store */
   const dispatch = useDispatch();
-  const currentScenarioTitle = useSelector(selectCurrentScenarioTitle);
-  const currentGeoObjectTitle = useSelector(selectCurrentGeoObjectTitle);
+  const currentVariant = useSelector(selectCurrentVariant);
+  const currentTreeItemName = useSelector(selectCurrentTreeItemName);
   const tableDataIsLoading = useSelector(selectTableLoading);
   const tableData: GridCollection = useSelector(selectTableData);
 
@@ -43,11 +42,7 @@ export const TeosTable: React.FC = () => {
     ContextMenuId.Row,
   );
   const [contextRef, setContextRef] = useState(null);
-
-  /** Effects */
-  useEffect(() => {
-    dispatch(TreeActions.getGeoObjectScenarios());
-  });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   /** Refs */
   const gridRef = useRef(null);
@@ -83,12 +78,12 @@ export const TeosTable: React.FC = () => {
 
   return (
     <div className={cn()}>
-      {currentGeoObjectTitle ? (
+      {currentTreeItemName ? (
         <div className={cn('Container')}>
           <GeoObjectTitle />
-          {currentScenarioTitle && (
+          {currentVariant!.name && (
             <>
-              <ScenarioTitle />
+              <VariantName isEditing={isEditing} setIsEditing={setIsEditing} />
               {tableDataIsLoading ? (
                 <Loader size="m" data-testid="table-data-loader" />
               ) : (

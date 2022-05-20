@@ -1,4 +1,4 @@
-import { DomainObject } from '@app/generated/graphql';
+import { DomainObjectL, Maybe } from '@app/generated/graphql';
 import { getNodeTree } from '@app/helpers/TreeHelper';
 import { ofAction } from '@app/operators/OfAction';
 import treeService from '@app/services/TreeService';
@@ -23,7 +23,7 @@ const handleInitProjectTree: Epic<
     tap(() => dispatch(LoaderAction.setLoading('tree'))),
     switchMap(() =>
       from(treeService.getProjectTree()).pipe(
-        tap((data: { domainObjects: DomainObject[] }) => {
+        tap((data: { domainObjects: Array<Maybe<DomainObjectL>> }) => {
           const nodes = getNodeTree(data);
 
           dispatch(TreeActions.setProjectTree(nodes));
@@ -34,4 +34,39 @@ const handleInitProjectTree: Epic<
     ignoreElements(),
   );
 
-export const TreeEpics = [handleInitProjectTree];
+/*
+const handleUpdateGeoObjectScenarios: Epic<
+  AnyAction,
+  AnyAction,
+  RootState,
+  StoreDependencies
+> = (action$, state$, { dispatch }) =>
+  action$.pipe(
+    ofAction(TreeActions.getGeoObjectScenarios),
+    tap((geoObjectScenarios: GeoScenario[]) => {
+      const projectTree = selectTreeData(state$);
+
+      geoObjectScenarios.forEach((scenario) => {
+        const nodeToUpdate = searchNode(projectTree, { name: scenario.currentVariant.title })
+      });
+    })
+    switchMap(() => {
+      
+      dispatch(TreeActions.setProjectTree(nodes));
+    }
+      from(treeService.getProjectTree()).pipe(
+        tap((data: { domainObjects: DomainObject[] }) => {
+          const nodes = getNodeTree(data);
+
+          dispatch(TreeActions.setProjectTree(nodes));
+        }),
+      ),
+    ),
+    ignoreElements(),
+  );
+*/
+
+export const TreeEpics = [
+  handleInitProjectTree,
+  // handleUpdateGeoObjectScenarios,
+];

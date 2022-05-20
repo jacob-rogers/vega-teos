@@ -3,6 +3,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { Providers } from '@app/components/Providers/Providers';
 import MainPage from '@app/pages/main/Main';
 import projectService from '@app/services/ProjectService';
+import treeService from '@app/services/TreeService';
 import { CurrentProject, Identity, ShellToolkit } from '@app/types';
 import { presetGpnDark, Theme } from '@consta/uikit/Theme';
 import { useMount } from '@gpn-prototypes/vega-ui';
@@ -34,6 +35,12 @@ const App: React.FC<Partial<ShellToolkit>> = (props) => {
         const initProps = await getInitProps(props);
 
         projectService.init({
+          client: initProps.graphqlClient,
+          project: initProps.currentProject,
+          identity: initProps.identity,
+        });
+
+        treeService.init({
           client: initProps.graphqlClient,
           project: initProps.currentProject,
           identity: initProps.identity,

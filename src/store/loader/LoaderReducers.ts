@@ -1,17 +1,17 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-import { LoaderStore } from '../StoreTypes';
-
-import { LoaderAction, LoadingType } from './LoaderActions';
+import { LoaderAction, LoaderStore, LoadingType } from './LoaderActions';
 
 export const loaderStoreInitialState: LoaderStore = Object.freeze({
   loaded: {
     table: false,
     tree: false,
+    updateVariant: false,
   },
   loading: {
     table: true,
     tree: true,
+    updateVariant: false,
   },
 });
 
@@ -47,10 +47,12 @@ export const LoaderReducers = reducerWithInitialState<LoaderStore>(
       loaded: {
         table: false,
         tree: false,
+        updateVariant: false,
       },
       loading: {
         table: false,
         tree: false,
+        updateVariant: false,
       },
     };
   });

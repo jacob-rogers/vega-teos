@@ -1,0 +1,10 @@
+.VariantName {
+  display: flex;
+  justify-content: space-between;
+  max-width: 25%;
+  margin-bottom: var(--space-xs);
+
+  &__Buttons {
+    margin-left: var(--space-xs);
+  }
+}

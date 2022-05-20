@@ -1,10 +1,5 @@
 import { ProjectService } from '@app/services/ProjectService';
-import {
-  GeoObject,
-  GeoScenario,
-  TreeFilter,
-  TreeItemData,
-} from '@app/types/TreeTypes';
+import { TreeItemData } from '@app/types/TreeTypes';
 import { GridCollection, TreeItem } from '@gpn-prototypes/vega-ui';
 import { History } from 'history';
 import { AnyAction, Dispatch } from 'redux';
@@ -28,11 +23,8 @@ export interface ProjectStore {
 }
 
 export interface TreeStore {
-  parentNode: TreeFilter;
   projectTree: TreeItem<TreeItemData>[];
-  currentScenario?: GeoScenario;
-  currentGeoObject?: GeoObject;
-  geoObjectScenarios: GeoObject[];
+  currentTreeItem?: TreeItem<TreeItemData>;
 }
 
 export type StoreDependencies = {

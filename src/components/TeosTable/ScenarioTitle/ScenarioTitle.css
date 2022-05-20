@@ -1,7 +1,0 @@
-.ScenarioTitle {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  max-width: 25%;
-  margin-bottom: var(--space-xl);
-}
